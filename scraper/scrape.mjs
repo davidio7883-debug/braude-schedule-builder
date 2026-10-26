@@ -85,9 +85,12 @@ async function main() {
     for (const c of d.cohorts) if (!cohortDegree.has(c.code.slice(0, 6))) cohortDegree.set(c.code.slice(0, 6), d.code);
 
     const sections = P.programSections(await ff.post('S_PROG', { HUG: d.code, R1C1: String(YEAR - 1), R1C2: '' }));
+    if (d.level === 'bsc' && !sections.some(s => sectionInfo(s.name).studyYears.length)) {
+      sections.push(...await findHiddenYearSections(d.code, String(YEAR - 1)));
+    }
     for (const s of sections) {
       const info = sectionInfo(s.name);
-      const list = P.courseList(await ff.get('S_SHOW_PROGS', `-N${s.startYear},-N${s.code}`));
+      const list = s.list ?? P.courseList(await ff.get('S_SHOW_PROGS', `-N${s.startYear},-N${s.code}`));
       d.sections.push({ code: s.code, name: s.name, ...info, courses: list.length });
       for (const c of list) {
         if (!curriculum.has(c.id)) curriculum.set(c.id, []);
@@ -139,6 +142,25 @@ async function main() {
     `סמסטרים: ${semesters.map(s => `${s.name} (${s.courses})`).join(', ')}`);
   log(`בקשות חיות: ${ff.stats.live}, מהמטמון: ${ff.stats.cached}, גיבוי מ-braude.top: ${fallbacks}`);
   if (failures.length) log(`שגיאות (${failures.length}):\n  ${failures.join('\n  ')}`);
+}
+
+/**
+ * Some degrees' per-year mandatory sections exist but are not listed by S_PROG (e.g. industrial engineering:
+ * "שנה א' חובה" is S_SHOW_PROGS 50001, while S_PROG only returns two elective clusters). Known codes elsewhere
+ * look like <degree>000<n> (30001, 40000, 50001) or <degree>00<n> (2005), so probe those shapes.
+ */
+async function findHiddenYearSections(degree, startYear) {
+  const found = [];
+  const candidates = [];
+  for (let n = 0; n <= 9; n++) candidates.push(`${degree}000${n}`, `${degree}00${n}`);
+  for (const code of [...new Set(candidates)]) {
+    const html = await ff.get('S_SHOW_PROGS', `-N${startYear},-N${code}`);
+    const list = P.courseList(html);
+    const name = html.match(/לפי התחום המבוקש\s*:\s*([^,<]+)/)?.[1]?.trim();
+    if (list.length && name && sectionInfo(name).studyYears.length) found.push({ name, startYear, code, list });
+  }
+  if (found.length) log(`  נמצאו ${found.length} חלקי תוכנית חובה שאינם מופיעים ברשימת המסלול (${found.map(s => s.code).join(', ')})`);
+  return found;
 }
 
 function buildCourse(id, catalogName, detail, cohortDegree, curriculumEntries) {

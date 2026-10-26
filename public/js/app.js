@@ -11,6 +11,7 @@ let INDEX = null;     // data/index.json
 let DATA = null;      // data/<year>.json
 let COURSES = new Map();
 let DEGREES = new Map();
+let COHORT_DEGREE = new Map(); // 6-digit cohort prefix -> degree code
 let activeCourse = null;     // course being edited on the board
 let preview = null;          // { index, picks } auto-builder result previewed on the board
 let auto = null;             // last auto-builder output
@@ -37,6 +38,7 @@ async function loadYear(year) {
   DATA = await res.json();
   COURSES = new Map(DATA.courses.map(c => [c.id, c]));
   DEGREES = new Map(DATA.degrees.map(d => [d.code, d]));
+  COHORT_DEGREE = new Map(DATA.degrees.flatMap(d => d.cohorts.map(c => [c.code.slice(0, 6), d.code])));
   state.year = DATA.year;
   if (!DATA.semesters.some(s => s.code === state.sem)) state.sem = DATA.semesters[0]?.code ?? '1';
 }
@@ -148,7 +150,12 @@ function addCourse(id) {
   for (const o of options) {
     const clash = o.slots.some(([d, s, e]) => others.some(([od, os, oe]) => od === d && s < oe && os < e));
     const st = scheduleStats([...others, ...o.slots]);
-    const score = (clash ? 1e6 : 0) + st.days * 600 + st.gaps + (o.full ? 50 : 0);
+    // shared courses: prefer groups scheduled for the student's own degree when there are such groups
+    const foreign = state.degree ? Object.values(o.picks).filter(iid => {
+      const d = COHORT_DEGREE.get(course.groups.find(g => g.iid === iid)?.cohort.slice(0, 6));
+      return d && d !== state.degree;
+    }).length : 0;
+    const score = (clash ? 1e6 : 0) + st.days * 600 + st.gaps + (o.full ? 50 : 0) + foreign * 120;
     if (score < bestScore) { best = o; bestScore = score; }
   }
   p.picks[id] = best ? { ...best.picks } : {};

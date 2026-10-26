@@ -101,3 +101,23 @@ test('real data: every B.Sc. cohort timetable has a clash-free schedule', { skip
   }
   assert.ok(solved > 0);
 });
+
+test('real data: industrial engineering year 1 lists its curriculum courses (regression)', { skip: !data }, () => {
+  // 11001/11003 run under the math department's service cohort and 251961 under another one, so only the
+  // curriculum ("שנה א' חובה", S_SHOW_PROGS 50001 – not listed by S_PROG) ties them to industrial engineering.
+  const yearOne = new Set(data.courses
+    .filter(c => { const i = c.degrees['5']; return i && (i.years.includes(1) || i.mandatory.includes(1)) && groupTypes(c, SEM).length; })
+    .map(c => c.id));
+  for (const id of [11001, 11003, 61903, 251961, 51104]) assert.ok(yearOne.has(id), `course ${id} missing from IEM year 1`);
+});
+
+test('real data: every B.Sc. degree shows all of its year-1 curriculum courses', { skip: !data }, () => {
+  for (const d of data.degrees.filter(x => x.level === 'bsc')) {
+    const missing = data.courses.filter(c => {
+      const i = c.degrees[d.code];
+      return i?.mandatory.includes(1) && groupTypes(c, SEM).length && !(i.years.includes(1) || i.mandatory.includes(1));
+    });
+    assert.equal(missing.length, 0, `${d.name}: ${missing.map(c => c.id)}`);
+    if (d.cohorts.length) assert.ok(d.sections.some(s => s.studyYears?.includes(1)), `${d.name}: no year-1 curriculum section found`);
+  }
+});
