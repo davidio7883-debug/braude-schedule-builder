@@ -1,0 +1,15 @@
+{
+  "name": "braude-schedule",
+  "version": "1.0.0",
+  "description": "בונה מערכת שעות חכם למכללת בראודה",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "scrape": "node scraper/scrape.mjs --year 2027",
+    "scrape:fresh": "node scraper/scrape.mjs --year 2027 --fresh",
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

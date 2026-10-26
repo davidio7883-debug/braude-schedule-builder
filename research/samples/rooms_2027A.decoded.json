@@ -1,0 +1,880 @@
+[
+ null,
+ {
+  "themeCookie": "auto",
+  "availableTimeSpans": [
+   [
+    "2026",
+    [
+     "א",
+     "ב",
+     "קיץ",
+     "שנתי"
+    ]
+   ],
+   [
+    "2027",
+    [
+     "א"
+    ]
+   ]
+  ],
+  "year": 2027,
+  "semester": "א",
+  "institute": "braude"
+ },
+ null,
+ {
+  "rooms": [
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "EM 202"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "10:30",
+    "end_time": "11:30",
+    "room": "308 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "308 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "12:20",
+    "room": "411 P"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "411 P"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "16:50",
+    "room": "417 P מע' בפיזיקה"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "20:50",
+    "end_time": "20:50",
+    "room": "417 P מע' בפיזיקה"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "318 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "702  L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "705 L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "09:30",
+    "end_time": "12:20",
+    "room": "216 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "216 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "316 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "10:30",
+    "room": "104 M מע' UNIX"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "12:50",
+    "end_time": "16:50",
+    "room": "104 M מע' UNIX"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "09:30",
+    "room": "218 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "218 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "209 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "210 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "221 M נגישות"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "EM204"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "12:50",
+    "end_time": "16:50",
+    "room": "EM 102"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "20:50",
+    "end_time": "20:50",
+    "room": "EM 102"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "09:30",
+    "room": "201 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "201 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "706 L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "15:50",
+    "end_time": "15:50",
+    "room": "303 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "10:30",
+    "room": "301 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "20:50",
+    "end_time": "20:50",
+    "room": "301 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "709 L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "707 L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "12:50",
+    "end_time": "13:40",
+    "room": "EM 203"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "EM 203"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "303 EM"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "319 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "09:30",
+    "room": "EM 103"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "EM 103"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "09:30",
+    "room": "309 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "309 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "12:20",
+    "room": "P413"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "P413"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "09:30",
+    "room": "302 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "302 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "704 L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "708 L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "703 L"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "11:30",
+    "end_time": "12:20",
+    "room": "302 EM"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "302 EM"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "208 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "15:50",
+    "end_time": "20:50",
+    "room": "מע' 109 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "202 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "12:20",
+    "room": "507 EF מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "507 EF מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "12:20",
+    "room": "506 EF מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "15:50",
+    "end_time": "20:50",
+    "room": "506 EF מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "321 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "09:30",
+    "room": "NX212"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "12:50",
+    "end_time": "14:50",
+    "room": "NX212"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "NX212"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "17:50",
+    "end_time": "20:50",
+    "room": "NX 311"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "15:50",
+    "end_time": "15:50",
+    "room": "NX 213"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "20:50",
+    "end_time": "20:50",
+    "room": "NX 213"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "10:30",
+    "room": "112 M אודיטוריום"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "112 M אודיטוריום"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "306 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "12:50",
+    "end_time": "15:50",
+    "room": "418 P מע' בפיזיקה"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "418 P מע' בפיזיקה"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "13:50",
+    "room": "511 VIP  EF"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "511 VIP  EF"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "310 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "EM 200 תיב\"מ"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "13:50",
+    "room": "EM 30 מע' פרויקטים אלקטרוניקב"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "EM 30 מע' פרויקטים אלקטרוניקב"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "10:30",
+    "room": "102 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "102 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "11:30",
+    "end_time": "20:50",
+    "room": "305 EM מע' אלקט'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "16:50",
+    "room": "306 EM מע' VLSI  אלקטורניקה"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "12:50",
+    "end_time": "20:50",
+    "room": "אולם ספורט"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "EM 201 מע' אלקט'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "11:30",
+    "room": "217 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "217 M מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "13:40",
+    "room": "fab lab 297"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "16:50",
+    "end_time": "20:50",
+    "room": "fab lab 297"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "402  P"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "11:30",
+    "end_time": "20:50",
+    "room": "301 EM מע' תקשורת"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "13:50",
+    "room": "106 D מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "12:20",
+    "room": "100 EM תיב\"מ"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "15:50",
+    "end_time": "15:50",
+    "room": "100 EM תיב\"מ"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "20:50",
+    "end_time": "20:50",
+    "room": "100 EM תיב\"מ"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "12:50",
+    "end_time": "20:50",
+    "room": "205 M מע' רשתות"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "101 EM מעבדת אלקטרוניקה"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "13:50",
+    "room": "154 D מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "18:50",
+    "end_time": "20:50",
+    "room": "154 D מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "20:50",
+    "end_time": "20:50",
+    "room": "401  P"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "520 EF  מקלט"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "EM 104 מע' הנע חשמלי"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "108 D מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "10:30",
+    "room": "109 D מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "19:50",
+    "end_time": "20:50",
+    "room": "109 D מע'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "304 EM מע' לאפיון התקנים"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "EM 307 מעב'"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "222 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "220 M"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "20:50",
+    "room": "420 P מע' בפיזיקה"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "08:30",
+    "end_time": "11:30",
+    "room": "P414"
+   },
+   {
+    "year": 2027,
+    "semester": "א",
+    "week_day": "ב",
+    "start_time": "14:50",
+    "end_time": "20:50",
+    "room": "P414"
+   }
+  ],
+  "week_day": "ב"
+ }
+]

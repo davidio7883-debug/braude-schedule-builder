@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>בונה המערכת – בראודה</title>
+  <meta name="description" content="בניית מערכת שעות חכמה לסטודנטים במכללת בראודה: סינון לפי מגמה, סילבוסים ובנייה אוטומטית של המערכת הטובה ביותר." />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    // Apply the saved theme before first paint.
+    try {
+      const t = JSON.parse(localStorage.getItem('braude-schedule:v1') || '{}').theme;
+      if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    } catch {}
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">ב</span>
+      <div>
+        <div class="brand-title">בונה המערכת</div>
+        <div class="brand-sub">מכללת בראודה</div>
+      </div>
+    </div>
+
+    <div class="term">
+      <label class="sr-only" for="term-select">שנה וסמסטר</label>
+      <select id="term-select" class="select"></select>
+      <button class="chip degree-chip" id="degree-chip" data-action="open-degree"></button>
+    </div>
+
+    <nav class="views" aria-label="תצוגות">
+      <button class="view-btn" data-action="view" data-view="board">מערכת שעות</button>
+      <button class="view-btn" data-action="view" data-view="rooms">חדרים פנויים</button>
+    </nav>
+
+    <div class="top-actions">
+      <button class="icon-btn" data-action="share" title="העתקת קישור לשיתוף המערכת" aria-label="שיתוף">
+        <svg viewBox="0 0 24 24"><path d="M18 8a3 3 0 1 0-2.8-4M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm12 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      </button>
+      <button class="icon-btn" data-action="print" title="הדפסה" aria-label="הדפסה">
+        <svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/></svg>
+      </button>
+      <button class="icon-btn" data-action="theme" title="מצב כהה / בהיר" aria-label="החלפת ערכת צבעים">
+        <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="app" class="layout">
+    <aside class="panel" id="panel">
+      <div class="tabs" role="tablist">
+        <button role="tab" class="tab" data-action="tab" data-tab="courses">קורסים</button>
+        <button role="tab" class="tab" data-action="tab" data-tab="mine">הקורסים שלי <span class="count" id="mine-count"></span></button>
+        <button role="tab" class="tab tab-accent" data-action="tab" data-tab="auto">✨ בנייה אוטומטית</button>
+      </div>
+      <div class="panel-body" id="panel-body"></div>
+    </aside>
+
+    <section class="board-area" id="board-area">
+      <div class="summary" id="summary"></div>
+      <div class="editbar" id="editbar" hidden></div>
+      <div class="board-scroll"><div class="board" id="board"></div></div>
+    </section>
+
+    <section class="rooms-area" id="rooms-area" hidden></section>
+  </main>
+
+  <nav class="mobile-nav" aria-label="ניווט">
+    <button data-action="mobile" data-pane="panel">קורסים</button>
+    <button data-action="mobile" data-pane="board">מערכת</button>
+  </nav>
+
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" id="modal-box"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div>טוען את נתוני הקורסים…</div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

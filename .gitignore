@@ -1,0 +1,22 @@
+# dependencies / build output
+node_modules/
+dist/
+build/
+.cache/
+
+# scraper raw HTTP cache and logs
+cache/
+*.log
+
+# secrets / local config
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# third-party compiled JS downloaded from braude.top during research (not ours to redistribute)
+research/bundles/

@@ -1,0 +1,1503 @@
+[
+ null,
+ {
+  "themeCookie": "auto",
+  "availableTimeSpans": [
+   [
+    "2026",
+    [
+     "א",
+     "ב",
+     "קיץ",
+     "שנתי"
+    ]
+   ],
+   [
+    "2027",
+    [
+     "א"
+    ]
+   ]
+  ],
+  "year": 2027,
+  "semester": "א",
+  "institute": "braude"
+ },
+ {
+  "full_courses": [
+   {
+    "course_id": 61761,
+    "year": 2027,
+    "name": "כריית נתונים ומערכות לומדות",
+    "description": "",
+    "origin_url": "https://info.braude.ac.il/yedion/fireflyweb.aspx?PRGNAME=S_LOOK_FOR_NOSE&ARGUMENTS=-N61761",
+    "instances": [
+     {
+      "instance_id": "-N61761,-N1,-N1,-N271060430,-N",
+      "course_id": 61761,
+      "year": 2027,
+      "instructor": "פרופ' וולקוביץ ולדימיר (זאב)",
+      "type": "הרצאה",
+      "hours": 3,
+      "group_name": "271060430",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061761.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "תורת ההסתברות מש"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "תכנות מערכות (פייתון)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": [
+       "-N61761,-N1,-N9,-N271060430,-N1",
+       "-N61761,-N1,-N9,-N271060430,-N2",
+       "-N61761,-N1,-N9,-N271060430,-N3",
+       "-N61761,-N1,-N9,-N271070430,-N1"
+      ],
+      "credit": 4,
+      "sessions": [
+       {
+        "instance_id": "-N61761,-N1,-N1,-N271060430,-N",
+        "semester": "א",
+        "week_day": "ג",
+        "start_time": "14:50",
+        "end_time": "17:50",
+        "room": "702  L"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N61761,-N1,-N1,-N271070430,-N",
+      "course_id": 61761,
+      "year": 2027,
+      "instructor": "ד\"ר אברוס רנטה",
+      "type": "הרצאה",
+      "hours": 3,
+      "group_name": "271070430",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061761.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "תורת ההסתברות מש"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "תכנות מערכות (פייתון)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": [
+       "-N61761,-N1,-N9,-N271060430,-N1",
+       "-N61761,-N1,-N9,-N271060430,-N2",
+       "-N61761,-N1,-N9,-N271060430,-N3",
+       "-N61761,-N1,-N9,-N271070430,-N1"
+      ],
+      "credit": 4,
+      "sessions": [
+       {
+        "instance_id": "-N61761,-N1,-N1,-N271070430,-N",
+        "semester": "א",
+        "week_day": "ד",
+        "start_time": "13:50",
+        "end_time": "16:50",
+        "room": "705 L"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N61761,-N1,-N9,-N271060430,-N1",
+      "course_id": 61761,
+      "year": 2027,
+      "instructor": "גב' קון חן",
+      "type": "תרגיל",
+      "hours": 2,
+      "group_name": "271060430/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061761.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "תורת ההסתברות מש"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "תכנות מערכות (פייתון)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N61761,-N1,-N9,-N271060430,-N1",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "08:30",
+        "end_time": "10:30",
+        "room": "216 M מע'"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N61761,-N1,-N9,-N271060430,-N2",
+      "course_id": 61761,
+      "year": 2027,
+      "instructor": "גב' קון חן",
+      "type": "תרגיל",
+      "hours": 2,
+      "group_name": "271060430/   2",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061761.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "תורת ההסתברות מש"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "תכנות מערכות (פייתון)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N61761,-N1,-N9,-N271060430,-N2",
+        "semester": "א",
+        "week_day": "ג",
+        "start_time": "10:30",
+        "end_time": "12:20",
+        "room": "316 M מע'"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N61761,-N1,-N9,-N271060430,-N3",
+      "course_id": 61761,
+      "year": 2027,
+      "instructor": "מר יהודה גור אריה",
+      "type": "תרגיל",
+      "hours": 2,
+      "group_name": "271060430/   3",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061761.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "תורת ההסתברות מש"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "תכנות מערכות (פייתון)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N61761,-N1,-N9,-N271060430,-N3",
+        "semester": "א",
+        "week_day": "ה",
+        "start_time": "10:30",
+        "end_time": "12:20",
+        "room": "104 M מע' UNIX"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N61761,-N1,-N9,-N271070430,-N1",
+      "course_id": 61761,
+      "year": 2027,
+      "instructor": "מר יהודה גור אריה",
+      "type": "תרגיל",
+      "hours": 2,
+      "group_name": "271070430/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061761.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "אלגוריתמים"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "תורת ההסתברות מש"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "תכנות מערכות (פייתון)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N61761,-N1,-N9,-N271070430,-N1",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "12:50",
+        "end_time": "14:50",
+        "room": "104 M מע' UNIX"
+       }
+      ],
+      "exams": []
+     }
+    ]
+   },
+   {
+    "course_id": 61975,
+    "year": 2027,
+    "name": "דחיסת נתונים",
+    "description": "",
+    "origin_url": "https://info.braude.ac.il/yedion/fireflyweb.aspx?PRGNAME=S_LOOK_FOR_NOSE&ARGUMENTS=-N61975",
+    "instances": [
+     {
+      "instance_id": "-N61975,-N1,-N1,-N271060420,-N1",
+      "course_id": 61975,
+      "year": 2027,
+      "instructor": "ד\"ר פרנקל זכריה",
+      "type": "הרצאה",
+      "hours": 2,
+      "group_name": "271060420/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061975.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגברה לינארית 2"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": [
+       "-N61975,-N1,-N9,-N271060420,-N1"
+      ],
+      "credit": 2.5,
+      "sessions": [
+       {
+        "instance_id": "-N61975,-N1,-N1,-N271060420,-N1",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "15:50",
+        "end_time": "17:50",
+        "room": "303 M"
+       }
+      ],
+      "exams": [
+       {
+        "instance_id": "-N61975,-N1,-N1,-N271060420,-N1",
+        "exam_round": 1,
+        "course_type": "הרצאה",
+        "date": "2027-2-9 08:30",
+        "exam_type": "בחינה רגילה "
+       },
+       {
+        "instance_id": "-N61975,-N1,-N1,-N271060420,-N1",
+        "exam_round": 2,
+        "course_type": "הרצאה",
+        "date": "2027-3-3 13:30",
+        "exam_type": "בחינה רגילה"
+       }
+      ]
+     },
+     {
+      "instance_id": "-N61975,-N2,-N1,-N271060420,-N1",
+      "course_id": 61975,
+      "year": 2027,
+      "instructor": "ד\"ר פרנקל זכריה",
+      "type": "הרצאה",
+      "hours": 2,
+      "group_name": "271060420/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061975.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגברה לינארית 2"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 2.5,
+      "sessions": [
+       {
+        "instance_id": "-N61975,-N2,-N1,-N271060420,-N1",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "15:50",
+        "end_time": "17:50",
+        "room": "303 M"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N61975,-N1,-N9,-N271060420,-N1",
+      "course_id": 61975,
+      "year": 2027,
+      "instructor": "ד\"ר פרנקל זכריה",
+      "type": "תרגיל",
+      "hours": 1,
+      "group_name": "271060420/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061975.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגברה לינארית 2"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N61975,-N1,-N9,-N271060420,-N1",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "17:50",
+        "end_time": "18:50",
+        "room": "303 M"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N61975,-N2,-N9,-N271060420,-N1",
+      "course_id": 61975,
+      "year": 2027,
+      "instructor": "ד\"ר פרנקל זכריה",
+      "type": "תרגיל",
+      "hours": 1,
+      "group_name": "271060420/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0061975.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "הנדסת מערכות מידע",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מדעי המחשב",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה"
+        ]
+       },
+       {
+        "major": "הנדסת תוכנה",
+        "options": [
+         "מבוא להסתברות וסטטיסטיקה",
+         "הסתברות להנדסת תוכנה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "אלגברה לינארית 2"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N61975,-N2,-N9,-N271060420,-N1",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "17:50",
+        "end_time": "18:50",
+        "room": "303 M"
+       }
+      ],
+      "exams": []
+     }
+    ]
+   },
+   {
+    "course_id": 51525,
+    "year": 2027,
+    "name": "כריית נתונים",
+    "description": "",
+    "origin_url": "https://info.braude.ac.il/yedion/fireflyweb.aspx?PRGNAME=S_LOOK_FOR_NOSE&ARGUMENTS=-N51525",
+    "instances": [
+     {
+      "instance_id": "-N51525,-N1,-N1,-N271050310,-N",
+      "course_id": 51525,
+      "year": 2027,
+      "instructor": "ד\"ר ליפשיץ רחל",
+      "type": "הרצאה",
+      "hours": 2,
+      "group_name": "271050310",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051525.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "מבוא לאלגוריתמיקה ותכנות",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "הסתברות וסטטיסטיקה מכ'"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא למדעי המחשב (מל\"מ)",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": [
+       "-N51525,-N1,-N8,-N271050310,-N1",
+       "-N51525,-N1,-N8,-N271050310,-N2"
+      ],
+      "credit": 2.5,
+      "sessions": [
+       {
+        "instance_id": "-N51525,-N1,-N1,-N271050310,-N",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "08:30",
+        "end_time": "10:30",
+        "room": "709 L"
+       }
+      ],
+      "exams": [
+       {
+        "instance_id": "-N51525,-N1,-N1,-N271050310,-N",
+        "exam_round": 1,
+        "course_type": "הרצאה",
+        "date": "2027-2-19 09:00",
+        "exam_type": "בחינה רגילה "
+       },
+       {
+        "instance_id": "-N51525,-N1,-N1,-N271050310,-N",
+        "exam_round": 2,
+        "course_type": "הרצאה",
+        "date": "2027-3-14 08:30",
+        "exam_type": "בחינה רגילה"
+       }
+      ]
+     },
+     {
+      "instance_id": "-N51525,-N2,-N1,-N271050310,-N",
+      "course_id": 51525,
+      "year": 2027,
+      "instructor": "ד\"ר ליפשיץ רחל",
+      "type": "הרצאה",
+      "hours": 2,
+      "group_name": "271050310",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051525.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "מבוא לאלגוריתמיקה ותכנות",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "הסתברות וסטטיסטיקה מכ'"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא למדעי המחשב (מל\"מ)",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 2.5,
+      "sessions": [
+       {
+        "instance_id": "-N51525,-N2,-N1,-N271050310,-N",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "08:30",
+        "end_time": "10:30",
+        "room": "709 L"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N51525,-N1,-N8,-N271050310,-N1",
+      "course_id": 51525,
+      "year": 2027,
+      "instructor": "ד\"ר ליפשיץ רחל",
+      "type": "מעבדה",
+      "hours": 1,
+      "group_name": "271050310/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051525.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "מבוא לאלגוריתמיקה ותכנות",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "הסתברות וסטטיסטיקה מכ'"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא למדעי המחשב (מל\"מ)",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N51525,-N1,-N8,-N271050310,-N1",
+        "semester": "א",
+        "week_day": "ב",
+        "start_time": "08:30",
+        "end_time": "09:30",
+        "room": "216 M מע'"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N51525,-N1,-N8,-N271050310,-N2",
+      "course_id": 51525,
+      "year": 2027,
+      "instructor": "ד\"ר ליפשיץ רחל",
+      "type": "מעבדה",
+      "hours": 1,
+      "group_name": "271050310/   2",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051525.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "מבוא לאלגוריתמיקה ותכנות",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "הסתברות וסטטיסטיקה מכ'"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא למדעי המחשב (מל\"מ)",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N51525,-N1,-N8,-N271050310,-N2",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "10:30",
+        "end_time": "11:30",
+        "room": "216 M מע'"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N51525,-N2,-N8,-N271050310,-N1",
+      "course_id": 51525,
+      "year": 2027,
+      "instructor": "ד\"ר ליפשיץ רחל",
+      "type": "מעבדה",
+      "hours": 1,
+      "group_name": "271050310/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051525.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "מבוא לאלגוריתמיקה ותכנות",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "הסתברות וסטטיסטיקה מכ'"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא למדעי המחשב (מל\"מ)",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N51525,-N2,-N8,-N271050310,-N1",
+        "semester": "א",
+        "week_day": "ב",
+        "start_time": "08:30",
+        "end_time": "09:30",
+        "room": "216 M מע'"
+       }
+      ],
+      "exams": []
+     },
+     {
+      "instance_id": "-N51525,-N2,-N8,-N271050310,-N2",
+      "course_id": 51525,
+      "year": 2027,
+      "instructor": "ד\"ר ליפשיץ רחל",
+      "type": "מעבדה",
+      "hours": 1,
+      "group_name": "271050310/   2",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051525.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "מבוא לאלגוריתמיקה ותכנות",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת מכונות",
+        "options": [
+         "הסתברות וסטטיסטיקה מכ'"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "תורת ההסתברות מש",
+         "סטטיסטיקה"
+        ]
+       },
+       {
+        "major": "מתמטיקה שימושית",
+        "options": [
+         "מבוא למדעי המחשב (מל\"מ)",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא לתכנות"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       },
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב לתעו\"נ"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N51525,-N2,-N8,-N271050310,-N2",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "10:30",
+        "end_time": "11:30",
+        "room": "216 M מע'"
+       }
+      ],
+      "exams": []
+     }
+    ]
+   },
+   {
+    "course_id": 51021,
+    "year": 2027,
+    "name": "מבוא למדעי הנתונים",
+    "description": "",
+    "origin_url": "https://info.braude.ac.il/yedion/fireflyweb.aspx?PRGNAME=S_LOOK_FOR_NOSE&ARGUMENTS=-N51021",
+    "instances": [
+     {
+      "instance_id": "-N51021,-N1,-N1,-N271050232,-N",
+      "course_id": 51021,
+      "year": 2027,
+      "instructor": "ד\"ר מרמור יריב",
+      "type": "הרצאה",
+      "hours": 2,
+      "group_name": "271050232",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051021.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": [
+       "-N51021,-N1,-N8,-N271050232,-N0",
+       "-N51021,-N1,-N8,-N271050232,-N1"
+      ],
+      "credit": 2.5,
+      "sessions": [
+       {
+        "instance_id": "-N51021,-N1,-N1,-N271050232,-N",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "11:30",
+        "end_time": "13:50",
+        "room": "210 M"
+       }
+      ],
+      "exams": [
+       {
+        "instance_id": "-N51021,-N1,-N1,-N271050232,-N",
+        "exam_round": 1,
+        "course_type": "הרצאה",
+        "date": "2027-2-12 09:00",
+        "exam_type": "בחינה רגילה "
+       },
+       {
+        "instance_id": "-N51021,-N1,-N1,-N271050232,-N",
+        "exam_round": 2,
+        "course_type": "הרצאה",
+        "date": "2027-3-8 08:30",
+        "exam_type": "בחינה רגילה"
+       }
+      ]
+     },
+     {
+      "instance_id": "-N51021,-N1,-N8,-N271050232,-N1",
+      "course_id": 51021,
+      "year": 2027,
+      "instructor": "ד\"ר ניסנבוים נעה",
+      "type": "מעבדה",
+      "hours": 1,
+      "group_name": "271050232/   1",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051021.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "מבוא למדעי המחשב לתעו\"נ",
+         "מבוא למדעי המחשב (מל\"מ)"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N51021,-N1,-N8,-N271050232,-N1",
+        "semester": "א",
+        "week_day": "א",
+        "start_time": "13:50",
+        "end_time": "14:50",
+        "room": "216 M מע'"
+       }
+      ],
+      "exams": []
+     }
+    ]
+   },
+   {
+    "course_id": 51913,
+    "year": 2027,
+    "name": "מבני נתונים ואלגוריתמים",
+    "description": "",
+    "origin_url": "https://info.braude.ac.il/yedion/fireflyweb.aspx?PRGNAME=S_LOOK_FOR_NOSE&ARGUMENTS=-N51913",
+    "instances": [
+     {
+      "instance_id": "-N51913,-N1,-N1,-N271050332,-N",
+      "course_id": 51913,
+      "year": 2027,
+      "instructor": "מר צור עופר",
+      "type": "הרצאה",
+      "hours": 2,
+      "group_name": "271050332",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051913.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "תכנות מערכות מתקדם בפייתון"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": [
+       "-N51913,-N1,-N8,-N271050332,-N0"
+      ],
+      "credit": 3,
+      "sessions": [
+       {
+        "instance_id": "-N51913,-N1,-N1,-N271050332,-N",
+        "semester": "א",
+        "week_day": "ד",
+        "start_time": "08:30",
+        "end_time": "10:30",
+        "room": "EM 202"
+       }
+      ],
+      "exams": [
+       {
+        "instance_id": "-N51913,-N1,-N1,-N271050332,-N",
+        "exam_round": 1,
+        "course_type": "הרצאה",
+        "date": "2027-2-18 08:30",
+        "exam_type": "בחינה רגילה "
+       },
+       {
+        "instance_id": "-N51913,-N1,-N1,-N271050332,-N",
+        "exam_round": 2,
+        "course_type": "הרצאה",
+        "date": "2027-3-17 16:30",
+        "exam_type": "בחינה רגילה"
+       }
+      ]
+     },
+     {
+      "instance_id": "-N51913,-N1,-N8,-N271050332,-N",
+      "course_id": 51913,
+      "year": 2027,
+      "instructor": "מר צור עופר",
+      "type": "מעבדה",
+      "hours": 2,
+      "group_name": "271050332",
+      "syllabus_link": "https://info.braude.ac.il/info/2027/0051913.pdf",
+      "language": "עברית",
+      "pre_requirements": [
+       {
+        "major": "הנדסת תעשייה וניהול",
+        "options": [
+         "תכנות מערכות מתקדם בפייתון"
+        ]
+       }
+      ],
+      "co_requirement_instance_ids": null,
+      "credit": 0,
+      "sessions": [
+       {
+        "instance_id": "-N51913,-N1,-N8,-N271050332,-N",
+        "semester": "א",
+        "week_day": "ה",
+        "start_time": "15:50",
+        "end_time": "17:50",
+        "room": "217 M מע'"
+       }
+      ],
+      "exams": []
+     }
+    ]
+   }
+  ],
+  "time_spans": [
+   "08:30",
+   "09:30",
+   "10:30",
+   "11:30",
+   "12:20",
+   "12:50",
+   "13:40",
+   "13:50",
+   "14:50",
+   "15:50",
+   "16:50",
+   "17:50",
+   "18:50",
+   "19:50",
+   "20:50",
+   "21:50",
+   "22:50",
+   "23:50"
+  ]
+ }
+]
