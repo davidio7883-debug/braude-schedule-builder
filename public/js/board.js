@@ -39,6 +39,7 @@ function blockHtml(it, from, cls) {
     <b>${esc(it.title)}</b>
     <div class="t">${esc(it.type)}${it.group ? ` · ${esc(it.group)}` : ''}${it.full ? ' · <span class="full-tag">מלא</span>' : ''}</div>
     ${short ? '' : `<div class="t">${range(fmtMin(it.start), fmtMin(it.end))}</div><div class="t">${esc(it.room || '')}</div>`}
+    ${it.pblOk && !it.clash ? `<div class="pbl-note" title="מפגש PBL מתקיים בתוך שעות ההרצאה של אותו קורס – זה מכוון ואינו התנגשות">PBL חופף להרצאה – מותר</div>` : ''}
   </div>`;
 }
 

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { courseOptions, groupTypes, semesterSessions, courseInSemester, clashIndexes, allowedGroups, toMin, LECTURE } from '../public/js/model.js';
+import { courseOptions, groupTypes, semesterSessions, courseInSemester, clashIndexes, allowedGroups, toMin, LECTURE, PBL } from '../public/js/model.js';
 import { solve } from '../public/js/optimizer.js';
 
 const DATA_FILE = new URL('../public/data/2027.json', import.meta.url);
@@ -11,7 +11,7 @@ const SEM = '1';
 function slotsOf(course, picks) {
   return Object.values(picks).flatMap(iid => {
     const g = course.groups.find(x => x.iid === iid);
-    return semesterSessions(g, SEM).map(s => [s.day, toMin(s.start), toMin(s.end)]);
+    return semesterSessions(g, SEM).map(s => [s.day, toMin(s.start), toMin(s.end), g.typeCode]);
   });
 }
 
@@ -32,7 +32,8 @@ function assertValid(courses, result, prefs) {
   }
   for (let i = 0; i < all.length; i++) {
     for (let j = i + 1; j < all.length; j++) {
-      const [d1, s1, e1, c1] = all[i], [d2, s2, e2, c2] = all[j];
+      const [d1, s1, e1, t1, c1] = all[i], [d2, s2, e2, t2, c2] = all[j];
+      if (c1 === c2 && (t1 === PBL || t2 === PBL)) continue; // PBL may run inside its own lecture
       assert.ok(!(d1 === d2 && s1 < e2 && s2 < e1), `clash ${all[i]} / ${all[j]}`);
     }
   }
@@ -159,9 +160,30 @@ test('real data: 11003 lecture and tutorial at the same hour is a clash (regress
   const twoSession = calc.groups.find(g => g.typeCode === LECTURE && semesterSessions(g, SEM).length === 2);
   const opt = options.find(o => o.picks[LECTURE] === twoSession.iid && !o.selfOverlap);
   const lectureSlots = semesterSessions(twoSession, SEM).map(s => [s.day, toMin(s.start), toMin(s.end)].join('-'));
-  for (const s of lectureSlots) assert.ok(opt.slots.some(x => x.join('-') === s), 'both lecture sessions are placed');
+  for (const s of lectureSlots) assert.ok(opt.slots.some(x => x.slice(0, 3).join('-') === s), 'both lecture sessions are placed');
 
   // only tutorials linked to the chosen lecture are offered
   const allowed = allowedGroups(calc, SEM, '9', { [LECTURE]: twoSession.iid }).map(g => g.iid);
   assert.ok(allowed.every(iid => twoSession.links.includes(iid)));
+});
+
+test('real data: 51104 PBL may overlap its own lecture, but not other courses', { skip: !data }, () => {
+  const course = data.courses.find(c => c.id === 51104);
+  const options = courseOptions(course, SEM);
+  // PBL groups 1-6 meet inside the Sunday lecture hours; combinations with them are valid
+  const nested = options.filter(o => o.slots.some((a, i) => o.slots.some((b, j) => j > i && a[0] === b[0] && a[1] < b[2] && b[1] < a[2])));
+  assert.ok(nested.length > 0, 'expected PBL sessions inside the lecture slot');
+  assert.ok(nested.every(o => !o.selfOverlap), 'PBL inside its own lecture is not a self-clash');
+  const out = solve([{ id: 51104, name: course.name, options }], { topK: 50 });
+  assert.equal(out.results.length, options.length, 'every combination is schedulable');
+
+  // board: same-course PBL overlap is not a clash...
+  const lecture = { courseId: 51104, typeCode: LECTURE, day: 0, start: 690, end: 830 };
+  const pbl = { courseId: 51104, typeCode: PBL, day: 0, start: 690, end: 740 };
+  assert.equal(clashIndexes([lecture, pbl]).size, 0);
+  // ...but PBL against another course still is
+  const other = { courseId: 11003, typeCode: LECTURE, day: 0, start: 700, end: 760 };
+  assert.ok(clashIndexes([pbl, other]).has(0));
+  // and a regular same-course overlap (lecture + tutorial) remains a clash
+  assert.equal(clashIndexes([lecture, { ...pbl, typeCode: '9' }]).size, 2);
 });

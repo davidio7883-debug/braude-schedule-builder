@@ -75,13 +75,18 @@ function placedItems() {
           courseId: id, iid: g.iid, day: s.day, start: toMin(s.start), end: toMin(s.end),
           title: course.name, type: g.type, group: g.sub ? `קב׳ ${g.sub}` : '', room: s.room, lecturer: s.lecturer || g.lecturer,
           full: g.full, hue: hueOf(id), active: activeCourse === id, preview: !!preview, action: 'block',
-          overlapOk: !!plan().overlap[id],
+          overlapOk: !!plan().overlap[id], typeCode: g.typeCode,
         });
       }
     }
   }
   const clashes = clashIndexes(items);
   items.forEach((it, i) => (it.clash = clashes.has(i)));
+  // PBL inside its own course's lecture hours is allowed: show a quiet note instead of a clash
+  for (const a of items) {
+    a.pblOk = items.some(b => b !== a && b.courseId === a.courseId && b.day === a.day && a.start < b.end && b.start < a.end &&
+      (a.typeCode === '21' || b.typeCode === '21'));
+  }
   return items;
 }
 

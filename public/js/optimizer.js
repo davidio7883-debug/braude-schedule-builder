@@ -1,6 +1,6 @@
 // Automatic timetable builder: branch-and-bound search over each course's group combinations.
 // Pure module: runs in a Web Worker (optimizer.worker.js) and in Node tests.
-import { scheduleStats } from './model.js';
+import { scheduleStats, overlapsItself } from './model.js';
 
 export const MODES = {
   fewDays:  { label: 'כמה שפחות ימים', days: 12, gaps: 1, span: 0.25, max: 0.25 },
@@ -15,7 +15,6 @@ export function scoreOf(stats, w) {
 
 const FULL_PENALTY = 240; // a full group costs as much as ~4 hours of gaps
 
-const overlapsItself = slots => slots.some((a, i) => slots.some((b, j) => j > i && a[0] === b[0] && a[1] < b[2] && b[1] < a[2]));
 
 /**
  * courses: [{ id, name, allowOverlap?, options: [{ picks, slots: [[day, start, end]], full }] }]

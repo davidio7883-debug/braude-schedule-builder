@@ -3,6 +3,15 @@
 export const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי'];
 export const DAY_LETTERS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳'];
 export const LECTURE = '1';
+/** PBL sessions run inside the course's own lecture hours (e.g. 51104), so they may overlap their own course. */
+export const PBL = '21';
+
+/** Same-course overlap that the college schedules on purpose: a PBL session with another session of its course. */
+export const allowedSelfOverlap = (typeA, typeB) => typeA === PBL || typeB === PBL;
+
+/** slots: [[day, start, end, typeCode]] – true if two of the course's own sessions clash. */
+export const overlapsItself = slots => slots.some((a, i) => slots.some((b, j) =>
+  j > i && a[0] === b[0] && a[1] < b[2] && b[1] < a[2] && !allowedSelfOverlap(a[3], b[3])));
 
 export const toMin = t => {
   const [h, m] = t.split(':').map(Number);
@@ -93,11 +102,11 @@ export function courseOptions(course, sem, { excludedTypes = [], locked = {}, av
       if (k === row.length) {
         count++;
         const groups = Object.values(picks).map(iid => byIid.get(iid));
-        const slots = groups.flatMap(g => semesterSessions(g, sem).map(s => [s.day, toMin(s.start), toMin(s.end)]))
+        const slots = groups.flatMap(g => semesterSessions(g, sem).map(s => [s.day, toMin(s.start), toMin(s.end), g.typeCode]))
           .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
         const full = groups.some(g => g.full);
         // the course's own groups overlap each other (e.g. lecture + tutorial at the same hour)
-        const selfOverlap = slots.some((a, i) => slots.some((b, j) => j > i && a[0] === b[0] && a[1] < b[2] && b[1] < a[2]));
+        const selfOverlap = overlapsItself(slots);
         const sig = slots.map(s => s.join('-')).join('|');
         const prev = bySig.get(sig);
         if (!prev) bySig.set(sig, { picks: { ...picks }, slots, full, selfOverlap, alternatives: 1 });
@@ -130,6 +139,7 @@ export function clashIndexes(items) {
     for (let j = i + 1; j < items.length; j++) {
       const a = items[i], b = items[j];
       if (a.overlapOk || b.overlapOk) continue;
+      if (a.courseId === b.courseId && allowedSelfOverlap(a.typeCode, b.typeCode)) continue;
       if (a.day === b.day && a.start < b.end && b.start < a.end) { clash.add(i); clash.add(j); }
     }
   }
