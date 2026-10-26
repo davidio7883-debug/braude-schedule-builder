@@ -112,19 +112,17 @@ function ghostItems() {
   return ghosts;
 }
 
-/** Sets a group for a course; when the lecture changes, keeps linked picks valid. */
+/** Sets a group for a course and keeps the other picks consistent with the link chain (lecture → tutorial → lab). */
 function setPick(courseId, iid) {
   const course = COURSES.get(courseId);
   const g = course.groups.find(x => x.iid === iid);
   const picks = (plan().picks[courseId] ??= {});
   picks[g.typeCode] = iid;
-  if (g.typeCode === LECTURE) {
+  for (let pass = 0; pass < 2; pass++) {
     for (const t of groupTypes(course, sem())) {
-      if (t.code === LECTURE) continue;
+      if (t.code === g.typeCode || !picks[t.code]) continue;
       const allowed = allowedGroups(course, sem(), t.code, picks);
-      if (picks[t.code] && !allowed.some(a => a.iid === picks[t.code])) {
-        picks[t.code] = bestFit(allowed, courseId)?.iid ?? null;
-      }
+      if (!allowed.some(a => a.iid === picks[t.code])) picks[t.code] = bestFit(allowed, courseId)?.iid ?? null;
     }
   }
   save();

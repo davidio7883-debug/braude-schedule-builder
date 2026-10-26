@@ -48,31 +48,46 @@ export function groupTypes(course, sem) {
 }
 
 /**
- * Allowed groups of each type, given the picks made so far.
- * Rule: one lecture group; for every other type, if the chosen lecture links groups of that type
- * ("קבוצות הקשורות"), one of those must be taken, otherwise any group of that type.
+ * Narrows the groups of one type by the links of the groups already picked.
+ * Links ("קבוצות הקשורות" / "תנאי קשר") can come from any group and form chains, e.g. in 61903 the lecture
+ * names its tutorials and each tutorial names its labs. A picked group that links some groups of this type
+ * requires one of them.
  */
+function constrain(course, typeGroups, picks) {
+  let allowed = typeGroups;
+  for (const iid of Object.values(picks ?? {})) {
+    const picked = iid && course.groups.find(g => g.iid === iid);
+    if (!picked || picked.typeCode === typeGroups[0]?.typeCode) continue;
+    const linked = allowed.filter(g => picked.links.includes(g.iid));
+    if (linked.length) allowed = linked;
+    else if (typeGroups.some(g => picked.links.includes(g.iid))) allowed = [];
+  }
+  return allowed;
+}
+
+/** Allowed groups of one type given the other picks; falls back to all groups of the type if picks conflict. */
 export function allowedGroups(course, sem, typeCode, picks) {
-  const types = groupTypes(course, sem);
-  const type = types.find(t => t.code === typeCode);
+  const type = groupTypes(course, sem).find(t => t.code === typeCode);
   if (!type) return [];
-  if (typeCode === LECTURE) return type.groups;
-  const lectureIid = picks?.[LECTURE];
-  const lecture = lectureIid && course.groups.find(g => g.iid === lectureIid);
-  const linked = lecture ? type.groups.filter(g => lecture.links.includes(g.iid)) : [];
-  return linked.length ? linked : type.groups;
+  const others = Object.fromEntries(Object.entries(picks ?? {}).filter(([code]) => code !== typeCode));
+  const allowed = constrain(course, type.groups, others);
+  return allowed.length ? allowed : type.groups;
+}
+
+/** True if every link of every picked group is satisfied by the other picks. */
+function consistent(course, picks) {
+  const picked = Object.values(picks).map(iid => course.groups.find(g => g.iid === iid));
+  return picked.every(p => picked.every(q => q === p || q.typeCode === p.typeCode ||
+    !course.groups.some(g => g.typeCode === q.typeCode && p.links.includes(g.iid)) || p.links.includes(q.iid)));
 }
 
 /**
  * Every valid combination of groups for a course (one per required type), collapsed by identical time slots.
- * options: [{ picks: {typeCode: iid}, slots: [[day, start, end]], full, alternatives }]
+ * options: [{ picks: {typeCode: iid}, slots: [[day, start, end, typeCode]], full, selfOverlap, alternatives }]
  */
 export function courseOptions(course, sem, { excludedTypes = [], locked = {}, avoidFull = false } = {}, cap = 20000) {
   const types = groupTypes(course, sem).filter(t => !excludedTypes.includes(t.code));
   const byIid = new Map(course.groups.map(g => [g.iid, g]));
-  const lists = []; // per-lecture list of [typeCode, candidates][]
-  const lecture = types.find(t => t.code === LECTURE);
-  const others = types.filter(t => t.code !== LECTURE);
   const pickable = (code, groups) => {
     let gs = locked[code] ? groups.filter(g => g.iid === locked[code]) : groups;
     if (avoidFull) {
@@ -81,25 +96,19 @@ export function courseOptions(course, sem, { excludedTypes = [], locked = {}, av
     }
     return gs;
   };
-  if (lecture) {
-    for (const L of pickable(LECTURE, lecture.groups)) {
-      const row = [[LECTURE, [L]]];
-      for (const t of others) {
-        const linked = t.groups.filter(g => L.links.includes(g.iid));
-        row.push([t.code, pickable(t.code, linked.length ? linked : t.groups)]);
-      }
-      lists.push(row);
-    }
-  } else if (others.length) {
-    lists.push(others.map(t => [t.code, pickable(t.code, t.groups)]));
-  }
+  // Pick link sources before their targets: lecture first, then types whose groups carry links.
+  const hasLinks = t => t.groups.some(g => g.links.length);
+  const order = types.slice().sort((a, b) =>
+    (a.code === LECTURE ? 0 : hasLinks(a) ? 1 : 2) - (b.code === LECTURE ? 0 : hasLinks(b) ? 1 : 2));
+  const rows = order.length ? [order] : [];
 
   const bySig = new Map();
   let count = 0;
-  for (const row of lists) {
+  for (const row of rows) {
     const walk = (k, picks) => {
       if (count >= cap) return;
       if (k === row.length) {
+        if (!consistent(course, picks)) return;
         count++;
         const groups = Object.values(picks).map(iid => byIid.get(iid));
         const slots = groups.flatMap(g => semesterSessions(g, sem).map(s => [s.day, toMin(s.start), toMin(s.end), g.typeCode]))
@@ -116,12 +125,12 @@ export function courseOptions(course, sem, { excludedTypes = [], locked = {}, av
         }
         return;
       }
-      const [code, candidates] = row[k];
-      for (const g of candidates) {
-        picks[code] = g.iid;
+      const type = row[k];
+      for (const g of pickable(type.code, constrain(course, type.groups, picks))) {
+        picks[type.code] = g.iid;
         walk(k + 1, picks);
       }
-      delete picks[code];
+      delete picks[type.code];
     };
     walk(0, {});
   }

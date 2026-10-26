@@ -187,3 +187,25 @@ test('real data: 51104 PBL may overlap its own lecture, but not other courses', 
   // and a regular same-course overlap (lecture + tutorial) remains a clash
   assert.equal(clashIndexes([lecture, { ...pbl, typeCode: '9' }]).size, 2);
 });
+
+test('real data: 61903 lecture -> lab -> tutorial on Monday follows the link chain (regression)', { skip: !data }, () => {
+  // Official: lecture 2 requires tutorial 2 or 3; tutorial 3 requires lab 2, 4 or 5 (lab 5 = Monday 10:30).
+  const course = data.courses.find(c => c.id === 61903);
+  const g = (type, sub) => course.groups.find(x => x.sem === SEM && x.typeCode === type && x.sub === sub);
+  const lecture2 = g('1', '2'), lab5 = g('8', '5'), tut3 = g('9', '3');
+  assert.deepEqual(new Set(lecture2.links), new Set([g('9', '2').iid, tut3.iid]), 'lecture 2 links tutorials, not labs');
+  assert.ok(tut3.links.includes(lab5.iid), 'tutorial 3 links lab 5');
+
+  const picks = { 1: lecture2.iid, 9: tut3.iid };
+  assert.ok(allowedGroups(course, SEM, '8', picks).some(x => x.iid === lab5.iid), 'Monday lab is allowed');
+  const monday = courseOptions(course, SEM).find(o => o.picks[1] === lecture2.iid && o.picks[9] === tut3.iid && o.picks[8] === lab5.iid);
+  assert.ok(monday, 'the all-Monday combination is a valid option');
+  assert.ok(monday.slots.every(s => s[0] === 1) && !monday.selfOverlap, 'all on Monday, back to back without clash');
+  // every option respects every link in the chain
+  for (const o of courseOptions(course, SEM)) {
+    const picked = Object.values(o.picks).map(iid => course.groups.find(x => x.iid === iid));
+    for (const p of picked) for (const q of picked) {
+      if (p !== q && course.groups.some(x => x.typeCode === q.typeCode && p.links.includes(x.iid))) assert.ok(p.links.includes(q.iid));
+    }
+  }
+});

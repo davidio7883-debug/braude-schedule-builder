@@ -118,6 +118,7 @@ async function main() {
       const bt = await braudeTop.fetchCourse(id, YEAR).catch(() => null);
       if (bt?.groups.length) { detail = { ...bt, description: detail.description || bt.description }; fallbacks++; }
     }
+    await resolveLinkTypes(detail.groups);
     courses.push(buildCourse(id, catalog.get(id).name, detail, cohortDegree, curriculum.get(id) || []));
   }
 
@@ -169,21 +170,48 @@ async function findHiddenYearSections(degree, startYear) {
   return found;
 }
 
+/**
+ * A group's "קבוצות הקשורות" list names cohort/sub pairs but not their type, and links form chains
+ * (e.g. 61903: lecture 2 -> tutorials 2,3; tutorial 3 -> labs 2,4,5), so "2" alone could mean tutorial 2 or lab 2.
+ * Use the one type in which every listed pair exists; if that is ambiguous, read the group's detail page,
+ * which says "תנאי קשר לתרגיל" / "תנאי קשר למעבדה".
+ */
+async function resolveLinkTypes(groups) {
+  for (const g of groups) {
+    if (!g.linkedTo?.length) continue;
+    const peers = groups.filter(o => o.sem === g.sem && o.typeCode !== g.typeCode);
+    const types = [...new Set(peers.map(o => o.typeCode))];
+    const matches = t => g.linkedTo.filter(l => peers.some(o => o.typeCode === t && o.cohort === l.cohort && o.sub === l.sub)).length;
+    const full = types.filter(t => matches(t) === g.linkedTo.length);
+    if (full.length === 1) { g.linkTypes = full; continue; }
+    const html = await ff.get('S_CourseDetails', g.iid);
+    const named = [...P.text(html).matchAll(/תנאי קשר ל(\S+?)\s*\(/g)].map(m => m[1]);
+    const byName = types.filter(t => named.some(n => peers.find(o => o.typeCode === t)?.type === n));
+    if (byName.length) g.linkTypes = byName;
+    else {
+      const best = Math.max(...types.map(matches));
+      g.linkTypes = best > 0 ? types.filter(t => matches(t) === best) : [];
+    }
+  }
+}
+
 function buildCourse(id, catalogName, detail, cohortDegree, curriculumEntries) {
   const groups = detail.groups.map(g => ({
     iid: g.iid, sem: g.sem, typeCode: g.typeCode, type: g.type || 'אחר',
     cohort: g.cohort, sub: g.sub, lecturer: g.lecturer, lang: g.lang, full: g.full,
-    links: g.linkedIds ?? [], linkedTo: g.linkedTo ?? [],
+    links: g.linkedIds ?? [], linkedTo: g.linkedTo ?? [], linkTypes: g.linkTypes,
     sessions: g.sessions.map(({ sem, day, start, end, room, lecturer }) => ({ sem, day, start, end, room, lecturer })),
   }));
-  // Resolve "קבוצות הקשורות" (cohort/sub pairs) into instance ids of the same course & semester.
+  // Resolve "קבוצות הקשורות" (cohort/sub pairs) into instance ids of the same course & semester,
+  // only within the group type the link points to (see resolveLinkTypes).
   for (const g of groups) {
     if (!g.linkedTo.length) continue;
     g.links = groups
-      .filter(o => o !== g && o.sem === g.sem && o.typeCode !== g.typeCode &&
+      .filter(o => o !== g && o.sem === g.sem && (g.linkTypes ?? []).includes(o.typeCode) &&
         g.linkedTo.some(l => l.cohort === o.cohort && l.sub === o.sub))
       .map(o => o.iid);
   }
+  groups.forEach(g => delete g.linkTypes);
   groups.forEach(g => delete g.linkedTo);
 
   const degrees = {};
