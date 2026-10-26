@@ -8,10 +8,17 @@
         {
           "code": "1",
           "name": "א",
-          "courses": 408
+          "courses": 440,
+          "hasHours": true
+        },
+        {
+          "code": "2",
+          "name": "ב",
+          "courses": 432,
+          "hasHours": false
         }
       ],
-      "generatedAt": "2026-10-26T14:40:51.414Z"
+      "generatedAt": "2026-10-26T14:46:19.389Z"
     }
   ],
   "default": {

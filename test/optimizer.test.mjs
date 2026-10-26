@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { courseOptions, groupTypes, semesterSessions, toMin, LECTURE } from '../public/js/model.js';
+import { courseOptions, groupTypes, semesterSessions, courseInSemester, toMin, LECTURE } from '../public/js/model.js';
 import { solve } from '../public/js/optimizer.js';
 
 const DATA_FILE = new URL('../public/data/2027.json', import.meta.url);
@@ -120,4 +120,19 @@ test('real data: every B.Sc. degree shows all of its year-1 curriculum courses',
     assert.equal(missing.length, 0, `${d.name}: ${missing.map(c => c.id)}`);
     if (d.cohorts.length) assert.ok(d.sections.some(s => s.studyYears?.includes(1)), `${d.name}: no year-1 curriculum section found`);
   }
+});
+
+test('real data: courses are separated by semester', { skip: !data }, () => {
+  const semA = data.semesters.find(s => s.code === '1');
+  const semB = data.semesters.find(s => s.code === '2');
+  assert.ok(semA?.hasHours, 'semester A has published hours');
+  assert.ok(semB, 'semester B is selectable once it has groups');
+  // a course taught only in semester B must not be offered in semester A, and vice versa
+  const onlyB = data.courses.filter(c => !courseInSemester(c, '1') && courseInSemester(c, '2'));
+  assert.ok(onlyB.length > 0);
+  for (const c of onlyB) assert.equal(groupTypes(c, '1').length, 0, `${c.id} leaks into semester A`);
+  // semester A groups never show semester B sessions on the board
+  for (const c of data.courses) for (const g of c.groups) for (const s of semesterSessions(g, '1')) assert.equal(s.sem, '1');
+  // while semester B hours are unpublished, its groups exist but have no sessions
+  if (!semB.hasHours) assert.ok(data.courses.every(c => c.groups.filter(g => g.sem === '2').every(g => !g.sessions.length)));
 });

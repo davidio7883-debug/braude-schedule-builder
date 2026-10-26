@@ -122,8 +122,14 @@ async function main() {
   }
 
   // 5. Output.
-  const semesters = SEMESTERS.filter(s => courses.some(c => c.groups.some(g => g.sessions.some(x => x.sem === s.code))))
-    .map(s => ({ ...s, courses: courses.filter(c => c.groups.some(g => g.sessions.some(x => x.sem === s.code))).length }));
+  // A semester is listed once it has groups; hasHours tells whether the college has published its timetable yet
+  // (e.g. semester ב 2027 had groups but no hours in October 2026).
+  const inSem = (c, code) => c.groups.some(g => g.sem === code || g.sessions.some(x => x.sem === code));
+  const semesters = SEMESTERS.filter(s => courses.some(c => inSem(c, s.code))).map(s => ({
+    ...s,
+    courses: courses.filter(c => inSem(c, s.code)).length,
+    hasHours: courses.some(c => c.groups.some(g => g.sessions.some(x => x.sem === s.code))),
+  }));
   const out = {
     year: YEAR,
     hebrewYear: P.selectOptions(home, 'ChangeYear').find(o => o.value === String(YEAR))?.label.split('-')[1]?.trim() ?? '',

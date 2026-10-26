@@ -198,7 +198,7 @@ function courseBadges(course) {
   if (types.length) b.push(`<span class="badge">${esc(types.join(' + '))}</span>`);
   const gs = semesterGroups(course, sem());
   if (gs.length && gs.every(g => g.full)) b.push(`<span class="badge full">מלא</span>`);
-  if (gs.length && gs.every(g => !g.sessions.some(s => s.sem === sem()))) b.push(`<span class="badge warn">ללא שעות</span>`);
+  if (gs.length && gs.every(g => !g.sessions.some(s => s.sem === sem()))) b.push(`<span class="badge warn">שעות טרם פורסמו</span>`);
   return b.join('');
 }
 
@@ -240,6 +240,7 @@ function renderCoursesTab() {
     <label class="toggle"><input type="checkbox" data-action="show-all" ${state.showAll ? 'checked' : ''}/> הצג קורסים מכל המגמות</label>`;
   }
   html += `</div>`;
+  if (!hoursPublished()) html += `<div class="notice warn">המכללה עדיין לא פרסמה שעות לסמסטר ${semName(sem())}. הקבוצות כבר ידועות, אז אפשר לבחור קורסים ולתכנן, והשעות יופיעו אחרי הרצה חוזרת של הסורק.</div>`;
 
   const sorted = list => list.sort((a, b) => a.name.localeCompare(b.name, 'he'));
   const section = (title, list, note = '') => list.length
@@ -265,10 +266,23 @@ function renderCoursesTab() {
       html += section('תוצאות ממגמות אחרות', elsewhere.slice(0, 40));
     }
     if (!mine.length && !more.length && !q) html += emptyState('אין קורסים להצגה', 'נסו לבחור "כל השנים" או סמסטר אחר');
+
+    // curriculum / cohort courses of this degree+year that run in another semester
+    const elsewhereSem = sorted(DATA.courses.filter(c => !courseInSemester(c, sem()) && matchesQuery(c, q) && relevance(c)?.mainHere));
+    if (elsewhereSem.length) {
+      html += `<details class="off-sem"><summary>לא נלמד בסמסטר זה (${elsewhereSem.length})</summary>${elsewhereSem.map(c => {
+        const sems = [...new Set(c.groups.map(g => g.sem))].filter(x => x !== sem()).map(semName);
+        return `<div class="off-row"><span class="course-name" data-action="details" data-course="${c.id}">${esc(c.name)}</span><span class="muted">${c.id}${sems.length ? ` · נלמד בסמסטר ${sems.join(', ')}` : ''}</span></div>`;
+      }).join('')}</details>`;
+    }
   }
   const notInSem = DATA.courses.length - inSem.length;
   if (notInSem) html += `<p class="muted" style="font-size:12.5px;margin-top:14px">${notInSem} קורסים נוספים נלמדים בשנה זו בסמסטרים אחרים או שטרם פורסמו להם שעות.</p>`;
   return html;
+}
+
+function hoursPublished() {
+  return DATA.semesters.find(s => s.code === sem())?.hasHours !== false;
 }
 
 function emptyState(title, sub = '', icon = '🔍') {
@@ -373,6 +387,7 @@ function renderAutoTab() {
 
 function renderAutoResults() {
   if (!auto) return '';
+  if (auto.notice) return `<div class="notice warn">${esc(auto.notice)}</div>`;
   if (auto.error) return `<div class="notice err">שגיאה: ${esc(auto.error)}</div>`;
   let html = '';
   if (auto.skipped?.length) html += `<div class="notice warn">לא נכללו (אין קבוצות בסמסטר זה): ${auto.skipped.map(esc).join(', ')}</div>`;
@@ -417,6 +432,11 @@ function runAuto() {
     else skipped.push(c.name);
   }
   if (!courses.length) { auto = { results: [], skipped, blocked: [] }; render(); return; }
+  if (!courses.some(c => c.options.some(o => o.slots.length))) {
+    auto = { notice: `השעות של סמסטר ${semName(sem())} עדיין לא פורסמו, ולכן אין עדיין מה לשבץ. נסו שוב אחרי עדכון הנתונים.` };
+    render();
+    return;
+  }
   autoRunning = true;
   preview = null;
   render();
@@ -722,7 +742,7 @@ function render() {
 
   const term = $('#term-select');
   term.innerHTML = INDEX.years.flatMap(y => y.semesters.map(s =>
-    `<option value="${y.year}|${s.code}" ${y.year === state.year && s.code === state.sem ? 'selected' : ''}>${esc(y.hebrewYear || y.year)} (${y.year}) · סמסטר ${s.name}</option>`)).join('');
+    `<option value="${y.year}|${s.code}" ${y.year === state.year && s.code === state.sem ? 'selected' : ''}>${esc(y.hebrewYear || y.year)} (${y.year}) · סמסטר ${s.name}${s.hasHours === false ? ' (שעות טרם פורסמו)' : ''}</option>`)).join('');
 
   const roomsView = state.view === 'rooms';
   $('#rooms-area').hidden = !roomsView;
