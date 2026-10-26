@@ -155,7 +155,7 @@ function addCourse(id) {
       const d = COHORT_DEGREE.get(course.groups.find(g => g.iid === iid)?.cohort.slice(0, 6));
       return d && d !== state.degree;
     }).length : 0;
-    const score = (clash ? 1e6 : 0) + st.days * 600 + st.gaps + (o.full ? 50 : 0) + foreign * 120;
+    const score = (clash || o.selfOverlap ? 1e6 : 0) + st.days * 600 + st.gaps + (o.full ? 50 : 0) + foreign * 120;
     if (score < bestScore) { best = o; bestScore = score; }
   }
   p.picks[id] = best ? { ...best.picks } : {};
@@ -392,8 +392,11 @@ function renderAutoResults() {
   let html = '';
   if (auto.skipped?.length) html += `<div class="notice warn">לא נכללו (אין קבוצות בסמסטר זה): ${auto.skipped.map(esc).join(', ')}</div>`;
   if (auto.blocked?.length) {
-    const why = r => [r.dayOff && 'ימי החופש', r.early && 'שעת ההתחלה', r.late && 'שעת הסיום', r.clash && 'התנגשות פנימית'].filter(Boolean).join(', ');
-    return html + `<div class="notice err"><b>לא נמצאה מערכת אפשרית.</b><br>${auto.blocked.map(b => `"${esc(b.name)}" – אין קבוצה שמתאימה ל${why(b.reasons) || 'הגבלות'}`).join('<br>')}<br>נסו לוותר על אחת ההגבלות.</div>`;
+    const why = r => [r.dayOff && 'ימי החופש', r.early && 'שעת ההתחלה', r.late && 'שעת הסיום'].filter(Boolean).join(', ');
+    const line = b => b.reasons.selfOverlap === b.total
+      ? `"${esc(b.name)}" – בידיעון כל שילוב של הרצאה ותרגול/מעבדה בקורס הזה חופף בשעות. אם זה נכון בפועל, סמנו לקורס "לאפשר חפיפה" בלשונית הקורסים שלי.`
+      : `"${esc(b.name)}" – אין קבוצה שמתאימה ל${why(b.reasons) || 'הגבלות'}`;
+    return html + `<div class="notice err"><b>לא נמצאה מערכת אפשרית.</b><br>${auto.blocked.map(line).join('<br>')}<br>נסו לוותר על אחת ההגבלות.</div>`;
   }
   if (!auto.results.length) return html + `<div class="notice err"><b>לא נמצא שילוב ללא התנגשויות.</b> נסו להסיר קורס, לבטל יום חופש או לשחרר נעילה.</div>`;
   html += `<div class="list-head"><span>נמצאו ${auto.results.length} המערכות הטובות ביותר</span><span>${auto.exhaustive ? 'חיפוש מלא' : 'חיפוש חלקי'} · ${(auto.ms / 1000).toFixed(1)} שנ׳</span></div>`;
@@ -474,10 +477,15 @@ function renderSummary(items) {
   const st = scheduleStats(items.map(i => [i.day, i.start, i.end]));
   const clashCount = items.filter(i => i.clash).length;
   let missing = 0;
+  const unlinked = [];
   for (const id of p.courses) {
     const c = COURSES.get(id);
     if (!c) continue;
-    for (const t of requiredTypes(c)) if (!picksOf(id)[t.code]) missing++;
+    for (const t of requiredTypes(c)) {
+      const iid = picksOf(id)[t.code];
+      if (!iid) missing++;
+      else if (!allowedGroups(c, sem(), t.code, picksOf(id)).some(g => g.iid === iid)) unlinked.push(`${c.name} (${t.name})`);
+    }
   }
   const term = `${DATA.hebrewYear || DATA.year} · סמסטר ${semName(sem())}`;
   $('#summary').innerHTML = `
@@ -488,6 +496,7 @@ function renderSummary(items) {
     <div class="sum-item"><b>${fmtHours(st.gaps)}</b>ש׳ חלונות</div>
     ${clashCount ? `<div class="sum-item bad"><b>${clashCount}</b>מפגשים מתנגשים</div>` : ''}
     ${missing ? `<div class="sum-item warn"><b>${missing}</b>קבוצות חסרות</div>` : ''}
+    ${unlinked.length ? `<div class="sum-item warn" title="${esc(unlinked.join(', '))}"><b>${unlinked.length}</b>לא מקושרים להרצאה שנבחרה</div>` : ''}
     <span class="spacer"></span>
     <span class="muted" style="font-size:13px">${esc(term)}</span>`;
 

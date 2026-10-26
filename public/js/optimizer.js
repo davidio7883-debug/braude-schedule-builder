@@ -13,22 +13,13 @@ export function scoreOf(stats, w) {
   return w.days * 60 * stats.days + w.gaps * stats.gaps + w.span * stats.sumSpan + w.max * stats.maxSpan;
 }
 
-/** Union of a course's own sessions per day (the yedion sometimes nests a tutorial inside the lecture slot). */
-function mergeSlots(slots) {
-  const out = [];
-  for (const [d, s, e] of slots.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1])) {
-    const last = out[out.length - 1];
-    if (last && last[0] === d && s <= last[2]) last[2] = Math.max(last[2], e);
-    else out.push([d, s, e]);
-  }
-  return out;
-}
-
 const FULL_PENALTY = 240; // a full group costs as much as ~4 hours of gaps
+
+const overlapsItself = slots => slots.some((a, i) => slots.some((b, j) => j > i && a[0] === b[0] && a[1] < b[2] && b[1] < a[2]));
 
 /**
  * courses: [{ id, name, allowOverlap?, options: [{ picks, slots: [[day, start, end]], full }] }]
- *          allowOverlap: the course may overlap others (e.g. labs that run on alternating weeks)
+ *          allowOverlap: the user allowed this course to overlap (others and itself), e.g. alternating-week labs
  * prefs:   { mode, daysOff: number[], earliest: minutes|null, latest: minutes|null, avoidFull, topK }
  */
 export function solve(courses, prefs = {}, limits = {}) {
@@ -42,8 +33,10 @@ export function solve(courses, prefs = {}, limits = {}) {
   // 1. Hard filters per option.
   const blocked = [];
   const prepared = courses.map(c => {
-    const reasons = { dayOff: 0, early: 0, late: 0 };
-    const options = c.options.map(o => ({ ...o, slots: mergeSlots(o.slots) })).filter(o => {
+    const reasons = { dayOff: 0, early: 0, late: 0, selfOverlap: 0 };
+    const options = c.options.filter(o => {
+      // a lecture and its tutorial/lab at the same hour is a real clash
+      if (!c.allowOverlap && overlapsItself(o.slots)) return reasons.selfOverlap++, false;
       for (const [d, s, e] of o.slots) {
         if (daysOff.has(d)) return reasons.dayOff++, false;
         if (prefs.earliest != null && s < prefs.earliest) return reasons.early++, false;

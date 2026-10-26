@@ -96,9 +96,11 @@ export function courseOptions(course, sem, { excludedTypes = [], locked = {}, av
         const slots = groups.flatMap(g => semesterSessions(g, sem).map(s => [s.day, toMin(s.start), toMin(s.end)]))
           .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
         const full = groups.some(g => g.full);
+        // the course's own groups overlap each other (e.g. lecture + tutorial at the same hour)
+        const selfOverlap = slots.some((a, i) => slots.some((b, j) => j > i && a[0] === b[0] && a[1] < b[2] && b[1] < a[2]));
         const sig = slots.map(s => s.join('-')).join('|');
         const prev = bySig.get(sig);
-        if (!prev) bySig.set(sig, { picks: { ...picks }, slots, full, alternatives: 1 });
+        if (!prev) bySig.set(sig, { picks: { ...picks }, slots, full, selfOverlap, alternatives: 1 });
         else {
           prev.alternatives++;
           if (prev.full && !full) Object.assign(prev, { picks: { ...picks }, full });
@@ -118,16 +120,16 @@ export function courseOptions(course, sem, { excludedTypes = [], locked = {}, av
 }
 
 /**
- * Clashes among a flat list of placed sessions: returns Set of indexes that overlap another course.
- * Sessions of the same course may overlap (the yedion nests some tutorials inside the lecture slot),
- * and items marked overlapOk (e.g. alternating-week labs) never clash.
+ * Clashes among a flat list of placed sessions: returns Set of indexes that overlap another session,
+ * including sessions of the same course (e.g. a lecture and a tutorial at the same hour).
+ * Only items of a course the user marked "allow overlap" (overlapOk) are exempt.
  */
 export function clashIndexes(items) {
   const clash = new Set();
   for (let i = 0; i < items.length; i++) {
     for (let j = i + 1; j < items.length; j++) {
       const a = items[i], b = items[j];
-      if (a.courseId === b.courseId || a.overlapOk || b.overlapOk) continue;
+      if (a.overlapOk || b.overlapOk) continue;
       if (a.day === b.day && a.start < b.end && b.start < a.end) { clash.add(i); clash.add(j); }
     }
   }

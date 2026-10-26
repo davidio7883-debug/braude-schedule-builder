@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { courseOptions, groupTypes, semesterSessions, courseInSemester, toMin, LECTURE } from '../public/js/model.js';
+import { courseOptions, groupTypes, semesterSessions, courseInSemester, clashIndexes, allowedGroups, toMin, LECTURE } from '../public/js/model.js';
 import { solve } from '../public/js/optimizer.js';
 
 const DATA_FILE = new URL('../public/data/2027.json', import.meta.url);
@@ -33,7 +33,6 @@ function assertValid(courses, result, prefs) {
   for (let i = 0; i < all.length; i++) {
     for (let j = i + 1; j < all.length; j++) {
       const [d1, s1, e1, c1] = all[i], [d2, s2, e2, c2] = all[j];
-      if (c1 === c2) continue; // a course may overlap itself (nested tutorial)
       assert.ok(!(d1 === d2 && s1 < e2 && s2 < e1), `clash ${all[i]} / ${all[j]}`);
     }
   }
@@ -135,4 +134,34 @@ test('real data: courses are separated by semester', { skip: !data }, () => {
   for (const c of data.courses) for (const g of c.groups) for (const s of semesterSessions(g, '1')) assert.equal(s.sem, '1');
   // while semester B hours are unpublished, its groups exist but have no sessions
   if (!semB.hasHours) assert.ok(data.courses.every(c => c.groups.filter(g => g.sem === '2').every(g => !g.sessions.length)));
+});
+
+test('real data: 11003 lecture and tutorial at the same hour is a clash (regression)', { skip: !data }, () => {
+  const calc = data.courses.find(c => c.id === 11003);
+  const options = courseOptions(calc, SEM);
+  // the yedion links every lecture to all 10 tutorials, so some combinations overlap in time
+  assert.ok(options.some(o => o.selfOverlap), 'expected overlapping combinations in the real data');
+
+  // the board flags a lecture + tutorial of the same course at the same hour
+  const bad = options.find(o => o.selfOverlap);
+  const items = bad.slots.map(([day, start, end]) => ({ courseId: 11003, day, start, end }));
+  assert.ok(clashIndexes(items).size > 0, 'same-course overlap must be flagged');
+
+  // the optimizer never returns such a combination...
+  const out = solve([{ id: 11003, name: calc.name, options }], { mode: 'balanced', topK: 50 });
+  assert.ok(out.results.length > 0);
+  for (const r of out.results) assertValid([calc], r, {});
+  // ...unless the user explicitly allowed overlap for the course
+  const loose = solve([{ id: 11003, name: calc.name, options, allowOverlap: true }], { topK: 50 });
+  assert.ok(loose.results.length >= out.results.length);
+
+  // a lecture group with 2 weekly sessions contributes both sessions
+  const twoSession = calc.groups.find(g => g.typeCode === LECTURE && semesterSessions(g, SEM).length === 2);
+  const opt = options.find(o => o.picks[LECTURE] === twoSession.iid && !o.selfOverlap);
+  const lectureSlots = semesterSessions(twoSession, SEM).map(s => [s.day, toMin(s.start), toMin(s.end)].join('-'));
+  for (const s of lectureSlots) assert.ok(opt.slots.some(x => x.join('-') === s), 'both lecture sessions are placed');
+
+  // only tutorials linked to the chosen lecture are offered
+  const allowed = allowedGroups(calc, SEM, '9', { [LECTURE]: twoSession.iid }).map(g => g.iid);
+  assert.ok(allowed.every(iid => twoSession.links.includes(iid)));
 });
