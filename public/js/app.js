@@ -1,7 +1,7 @@
 import { state, save, plan } from './store.js';
 import {
   DAY_NAMES, DAY_LETTERS, LECTURE, toMin, fmtMin, fmtHours, range, semesterGroups, semesterSessions, courseInSemester,
-  groupTypes, allowedGroups, courseOptions, clashIndexes, scheduleStats,
+  groupTypes, allowedGroups, courseOptions, clashIndexes, scheduleStats, eligibleCourse,
 } from './model.js';
 import { MODES } from './optimizer.js';
 import { renderBoard } from './board.js';
@@ -61,6 +61,18 @@ function requiredTypes(course) {
   return groupTypes(course, sem()).filter(t => !excluded.includes(t.code));
 }
 
+/** Degree a group is scheduled for (from its cohort code), or null for shared/service cohorts. */
+const groupDegree = g => COHORT_DEGREE.get(g.cohort.slice(0, 6)) ?? null;
+
+const showsOtherDegrees = courseId => !state.degree || state.showOtherDegrees || !!state.otherDegreeCourses[courseId];
+
+/** The groups this student can register to (see model.eligibleCourse). */
+function eligible(course) {
+  return eligibleCourse(course, sem(), {
+    degree: state.degree, degreeOf: groupDegree, showOther: showsOtherDegrees(course.id), hidden: plan().hidden[course.id],
+  });
+}
+
 function placedItems() {
   const items = [];
   for (const id of plan().courses) {
@@ -92,8 +104,8 @@ function placedItems() {
 
 function ghostItems() {
   if (!activeCourse || preview) return [];
-  const course = COURSES.get(activeCourse);
-  if (!course) return [];
+  if (!COURSES.get(activeCourse)) return [];
+  const course = eligible(COURSES.get(activeCourse));
   const picks = plan().picks[course.id] ?? {};
   const ghosts = [];
   for (const t of requiredTypes(course)) {
@@ -114,8 +126,8 @@ function ghostItems() {
 
 /** Sets a group for a course and keeps the other picks consistent with the link chain (lecture → tutorial → lab). */
 function setPick(courseId, iid) {
-  const course = COURSES.get(courseId);
-  const g = course.groups.find(x => x.iid === iid);
+  const g = COURSES.get(courseId).groups.find(x => x.iid === iid);
+  const course = eligible(COURSES.get(courseId));
   const picks = (plan().picks[courseId] ??= {});
   picks[g.typeCode] = iid;
   for (let pass = 0; pass < 2; pass++) {
@@ -145,7 +157,7 @@ function bestFit(groups, excludeCourse) {
 function addCourse(id) {
   const p = plan();
   if (p.courses.includes(id)) return;
-  const course = COURSES.get(id);
+  const course = eligible(COURSES.get(id));
   p.courses.push(id);
   const others = placedItems().map(i => [i.day, i.start, i.end]);
   const options = courseOptions(course, sem(), { avoidFull: true });
@@ -153,9 +165,9 @@ function addCourse(id) {
   for (const o of options) {
     const clash = o.slots.some(([d, s, e]) => others.some(([od, os, oe]) => od === d && s < oe && os < e));
     const st = scheduleStats([...others, ...o.slots]);
-    // shared courses: prefer groups scheduled for the student's own degree when there are such groups
+    // when other degrees' groups are shown, still prefer the student's own
     const foreign = state.degree ? Object.values(o.picks).filter(iid => {
-      const d = COHORT_DEGREE.get(course.groups.find(g => g.iid === iid)?.cohort.slice(0, 6));
+      const d = groupDegree(course.groups.find(g => g.iid === iid));
       return d && d !== state.degree;
     }).length : 0;
     const score = (clash || o.selfOverlap ? 1e6 : 0) + st.days * 600 + st.gaps + (o.full ? 50 : 0) + foreign * 120;
@@ -240,7 +252,8 @@ function renderCoursesTab() {
     html += `<div class="chips" role="group" aria-label="שנת לימודים">
       ${STUDY_YEARS.map((y, i) => `<button class="chip ${state.studyYear === i ? 'on' : ''}" data-action="study-year" data-year="${i}">${i ? `שנה ${y}` : 'כל השנים'}</button>`).join('')}
     </div>
-    <label class="toggle"><input type="checkbox" data-action="show-all" ${state.showAll ? 'checked' : ''}/> הצג קורסים מכל המגמות</label>`;
+    <label class="toggle"><input type="checkbox" data-action="show-all" ${state.showAll ? 'checked' : ''}/> הצג קורסים מכל המגמות</label>
+    <label class="toggle" title="כברירת מחדל מוצעות רק הקבוצות שמשובצות לתואר שלך, כמו במערכת הרישום"><input type="checkbox" data-action="other-degrees" ${state.showOtherDegrees ? 'checked' : ''}/> הצג קבוצות של תארים אחרים</label>`;
   }
   html += `</div>`;
   if (!hoursPublished()) html += `<div class="notice warn">המכללה עדיין לא פרסמה שעות לסמסטר ${semName(sem())}. הקבוצות כבר ידועות, אז אפשר לבחור קורסים ולתכנן, והשעות יופיעו אחרי הרצה חוזרת של הסורק.</div>`;
@@ -284,6 +297,11 @@ function renderCoursesTab() {
   return html;
 }
 
+function dedicatedNote(ec) {
+  if (!state.degree || showsOtherDegrees(ec.id) || !ec.noDedicated?.length) return '';
+  return `<div class="notice" style="font-size:12.5px;padding:6px 10px">אין קבוצה ייעודית לתואר שלך ב${esc(ec.noDedicated.join(', '))} – מוצגות הקבוצות המשותפות. בדף הקורס אפשר לסמן קבוצות שאינן זמינות לך.</div>`;
+}
+
 function hoursPublished() {
   return DATA.semesters.find(s => s.code === sem())?.hasHours !== false;
 }
@@ -299,7 +317,9 @@ function groupLabel(g) {
   const when = sessions.length
     ? sessions.map(s => `${DAY_LETTERS[s.day]} ${range(s.start, s.end)}`).join(' | ')
     : 'ללא שעות';
-  return `${when} · ${g.lecturer || ''}${g.full ? ' · מלא' : ''}`;
+  const d = state.degree && groupDegree(g);
+  const other = d && d !== state.degree ? ` · ${DEGREES.get(d)?.name ?? 'תואר אחר'}` : '';
+  return `${when} · ${g.lecturer || ''}${g.full ? ' · מלא' : ''}${other}`;
 }
 
 function renderMineTab() {
@@ -313,7 +333,8 @@ function renderMineTab() {
     credits += c.credits || 0;
     const picks = p.picks[id] ?? {};
     const excluded = p.excluded[id] ?? [];
-    const types = groupTypes(c, sem());
+    const ec = eligible(c);
+    const types = groupTypes(ec, sem());
     html += `<div class="mine-card ${activeCourse === id ? 'active' : ''}" style="--h:${hueOf(id)}">
       <div class="mine-head">
         <div class="course-name" data-action="details" data-course="${id}">${esc(c.name)}</div>
@@ -324,9 +345,10 @@ function renderMineTab() {
       <div class="course-meta">${id}${c.credits ? ` · ${c.credits} נ״ז` : ''}
         <button class="linkish" data-action="overlap" data-course="${id}" title="למשל מעבדה שמתקיימת אחת לשבועיים – הקורס לא ייחשב כמתנגש">${p.overlap[id] ? '✓ מותר לחפוף לקורסים אחרים' : 'לאפשר חפיפה (מעבדה דו-שבועית)'}</button></div>`;
     if (!types.length) html += `<div class="notice warn">הקורס לא נלמד בסמסטר זה</div>`;
+    html += dedicatedNote(ec);
     for (const t of types) {
       const isExcluded = excluded.includes(t.code);
-      const allowed = allowedGroups(c, sem(), t.code, picks);
+      const allowed = allowedGroups(ec, sem(), t.code, picks);
       const missing = !isExcluded && !picks[t.code];
       html += `<div class="pick-row ${isExcluded ? 'excluded' : ''}">
         <span class="pick-type">${esc(t.name)}</span>
@@ -433,7 +455,7 @@ function runAuto() {
     const c = COURSES.get(id);
     if (!courseInSemester(c, sem())) { skipped.push(c.name); continue; }
     const locked = prefs.respectLocks && p.locked[id] ? Object.fromEntries(Object.entries(p.picks[id] ?? {}).filter(([, v]) => v)) : {};
-    const options = courseOptions(c, sem(), { excludedTypes: p.excluded[id] ?? [], locked });
+    const options = courseOptions(eligible(c), sem(), { excludedTypes: p.excluded[id] ?? [], locked });
     if (options.length) courses.push({ id, name: c.name, options, allowOverlap: !!p.overlap[id] });
     else skipped.push(c.name);
   }
@@ -480,13 +502,15 @@ function renderSummary(items) {
   const st = scheduleStats(items.map(i => [i.day, i.start, i.end]));
   const clashCount = items.filter(i => i.clash).length;
   let missing = 0;
-  const unlinked = [];
+  const unlinked = [], notMine = [];
   for (const id of p.courses) {
     const c = COURSES.get(id);
     if (!c) continue;
+    const mine = new Set(eligible(c).groups.map(g => g.iid));
     for (const t of requiredTypes(c)) {
       const iid = picksOf(id)[t.code];
       if (!iid) missing++;
+      else if (!mine.has(iid)) notMine.push(`${c.name} (${t.name})`);
       else if (!allowedGroups(c, sem(), t.code, picksOf(id)).some(g => g.iid === iid)) unlinked.push(`${c.name} (${t.name})`);
     }
   }
@@ -499,6 +523,7 @@ function renderSummary(items) {
     <div class="sum-item"><b>${fmtHours(st.gaps)}</b>ש׳ חלונות</div>
     ${clashCount ? `<div class="sum-item bad"><b>${clashCount}</b>מפגשים מתנגשים</div>` : ''}
     ${missing ? `<div class="sum-item warn"><b>${missing}</b>קבוצות חסרות</div>` : ''}
+    ${notMine.length ? `<div class="sum-item warn" title="${esc(notMine.join(', '))}"><b>${notMine.length}</b>קבוצות שאינן של התואר שלך</div>` : ''}
     ${unlinked.length ? `<div class="sum-item warn" title="${esc(unlinked.join(', '))}"><b>${unlinked.length}</b>לא מקושרים להרצאה שנבחרה</div>` : ''}
     <span class="spacer"></span>
     <span class="muted" style="font-size:13px">${esc(term)}</span>`;
@@ -589,19 +614,34 @@ function renderCourseModal() {
   if (modalTab === 'info') {
     body += `<div class="desc">${c.description ? esc(c.description) : '<span class="muted">אין תיאור קורס בידיעון.</span>'}</div>`;
     const types = groupTypes(c, sem());
+    const ec = eligible(c);
+    const mine = new Set(ec.groups.map(g => g.iid));
+    const hidden = new Set(plan().hidden[c.id] ?? []);
     if (!types.length) body += `<div class="notice warn">הקורס אינו נלמד בסמסטר ${semName(sem())}.</div>`;
     else {
-      body += `<table class="groups"><thead><tr><th>קבוצה</th><th>מרצה</th><th>מועדים</th><th>סטטוס</th><th></th></tr></thead><tbody>`;
+      if (state.degree) {
+        body += `<div class="row" style="justify-content:space-between;margin-bottom:8px">
+          <span class="muted" style="font-size:13px">${mine.size < c.groups.length ? (n => `${n === 1 ? 'מוצגת במערכת קבוצה אחת שזמינה לך' : `מוצגות במערכת ${n} קבוצות שזמינות לך`} מתוך ${types.reduce((k, t) => k + t.groups.length, 0)}`)(types.reduce((n, t) => n + t.groups.filter(g => mine.has(g.iid)).length, 0)) : 'כל הקבוצות זמינות במערכת'}</span>
+          <label class="toggle"><input type="checkbox" data-action="course-other-degrees" data-course="${c.id}" ${state.otherDegreeCourses[c.id] ? 'checked' : ''} ${state.showOtherDegrees ? 'disabled' : ''}/> הצג קבוצות של תארים אחרים בקורס זה</label>
+        </div>${dedicatedNote(ec)}`;
+      }
+      body += `<table class="groups"><thead><tr><th>קבוצה</th><th>מרצה</th><th>מועדים</th><th>סטטוס</th><th>${state.degree ? 'זמינה לי' : ''}</th><th></th></tr></thead><tbody>`;
       for (const t of types) {
-        body += `<tr class="type-row"><td colspan="5">${esc(t.name)} · ${t.groups.length} קבוצות</td></tr>`;
+        body += `<tr class="type-row"><td colspan="6">${esc(t.name)} · ${t.groups.length} קבוצות</td></tr>`;
         for (const g of t.groups) {
           const sessions = semesterSessions(g, sem());
-          const linked = g.links.length ? `<div class="muted" style="font-size:12px">מקושרת ל-${g.links.length} קבוצות תרגול/מעבדה</div>` : '';
-          body += `<tr>
-            <td><span dir="ltr">${esc(g.cohort)}${g.sub ? ` / ${esc(g.sub)}` : ''}</span>${linked}</td>
+          const linked = g.links.length ? `<div class="muted" style="font-size:12px">מקושרת ל-${g.links.length} קבוצות ${esc(c.groups.find(x => x.iid === g.links[0])?.type ?? '')}</div>` : '';
+          const d = groupDegree(g);
+          const degreeTag = d && d !== state.degree ? `<span class="badge">${esc(DEGREES.get(d)?.name ?? 'תואר אחר')}</span>` : d ? '<span class="badge must">התואר שלך</span>' : '';
+          const availability = !state.degree ? '' : hidden.has(g.iid) || mine.has(g.iid) || !(d && d !== state.degree)
+            ? `<input type="checkbox" data-action="hide-group" data-course="${c.id}" data-iid="${esc(g.iid)}" ${hidden.has(g.iid) ? '' : 'checked'} title="בטלו את הסימון אם הקבוצה לא מוצעת לכם במערכת הרישום">`
+            : '<span class="muted" style="font-size:12px">תואר אחר</span>';
+          body += `<tr class="${state.degree && !mine.has(g.iid) ? 'not-mine' : ''}">
+            <td><span dir="ltr">${esc(g.cohort)}${g.sub ? ` / ${esc(g.sub)}` : ''}</span> ${degreeTag}${linked}</td>
             <td>${esc(g.lecturer)}${g.lang && g.lang !== 'עברית' ? ` <span class="badge">${esc(g.lang)}</span>` : ''}</td>
             <td>${sessions.length ? sessions.map(s => `יום ${DAY_NAMES[s.day]} ${range(s.start, s.end)}${s.room ? ` · ${esc(s.room)}` : ''}`).join('<br>') : '<span class="muted">טרם פורסם</span>'}</td>
             <td>${g.full ? '<span class="badge full">מלא</span>' : '<span class="badge ok">פתוח</span>'}</td>
+            <td>${availability}</td>
             <td><button class="linkish" data-action="official-group" data-iid="${esc(g.iid)}">באתר ↗</button></td>
           </tr>`;
         }
@@ -821,6 +861,15 @@ const actions = {
   'no-degree': () => { state.degree = null; state.showAll = true; save(); closeModal(); render(); },
   'study-year': el => { state.studyYear = Number(el.dataset.year); save(); render(); },
   'show-all': el => { state.showAll = el.checked; save(); render(); },
+  'other-degrees': el => { state.showOtherDegrees = el.checked; save(); render(); },
+  'course-other-degrees': el => { state.otherDegreeCourses[el.dataset.course] = el.checked; save(); render(); },
+  'hide-group': el => {
+    const id = Number(el.dataset.course), p = plan();
+    const list = new Set(p.hidden[id] ?? []);
+    if (el.checked) list.delete(el.dataset.iid); else list.add(el.dataset.iid);
+    p.hidden[id] = [...list];
+    save(); render();
+  },
   add: el => { addCourse(Number(el.dataset.course)); render(); },
   remove: el => { removeCourse(Number(el.dataset.course)); render(); },
   details: el => { modalCourse = Number(el.dataset.course); modalTab = 'info'; renderCourseModal(); },

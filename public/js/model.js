@@ -178,3 +178,32 @@ export function scheduleStats(slots) {
   });
   return { days, busy, gaps, sumSpan, maxSpan, earliest: days ? earliest : null, latest: days ? latest : null, daily };
 }
+
+/**
+ * The groups a student can register to. Like the official registration system, a student only gets the groups
+ * of their own degree's cohort: per group type, the own-degree groups (plus tutorials/labs linked from groups
+ * already allowed), else shared-cohort groups, else everything – the latter two are reported in noDedicated.
+ * Groups the student marked "not available to me" (hidden) are dropped unless that would empty a type.
+ * opts: { degree, degreeOf(group) -> degree code | null, showOther, hidden: [iid] }
+ * Returns the course with only those groups (other semesters untouched), plus noDedicated: [type names].
+ */
+export function eligibleCourse(course, sem, { degree, degreeOf, showOther = false, hidden = [] } = {}) {
+  const hide = new Set(hidden);
+  const keep = new Set(course.groups.filter(g => g.sem !== sem && !g.sessions.some(s => s.sem === sem)));
+  const noDedicated = [];
+  const rank = t => (t.code === LECTURE ? 0 : t.groups.some(g => g.links.length) ? 1 : 2);
+  for (const t of groupTypes(course, sem).sort((a, b) => rank(a) - rank(b))) {
+    let gs = t.groups;
+    if (degree && !showOther) {
+      const own = gs.filter(g => degreeOf(g) === degree);
+      const linked = gs.filter(g => [...keep].some(k => k.links.includes(g.iid)));
+      const shared = gs.filter(g => !degreeOf(g));
+      if (own.length) gs = [...new Set([...own, ...linked])];
+      else if (linked.length) gs = linked;
+      else { gs = shared.length ? shared : gs; noDedicated.push(t.name); }
+    }
+    const visible = gs.filter(g => !hide.has(g.iid));
+    for (const g of visible.length ? visible : gs) keep.add(g);
+  }
+  return { ...course, groups: course.groups.filter(g => keep.has(g)), noDedicated };
+}

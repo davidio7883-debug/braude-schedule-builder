@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { courseOptions, groupTypes, semesterSessions, courseInSemester, clashIndexes, allowedGroups, toMin, LECTURE, PBL } from '../public/js/model.js';
+import { courseOptions, groupTypes, semesterSessions, courseInSemester, clashIndexes, allowedGroups, eligibleCourse, toMin, LECTURE, PBL } from '../public/js/model.js';
 import { solve } from '../public/js/optimizer.js';
 
 const DATA_FILE = new URL('../public/data/2027.json', import.meta.url);
@@ -208,4 +208,34 @@ test('real data: 61903 lecture -> lab -> tutorial on Monday follows the link cha
       if (p !== q && course.groups.some(x => x.typeCode === q.typeCode && p.links.includes(x.iid))) assert.ok(p.links.includes(q.iid));
     }
   }
+});
+
+test('real data: by default only the student\'s own degree groups are offered', { skip: !data }, () => {
+  const cohortDegree = new Map(data.degrees.flatMap(d => d.cohorts.map(c => [c.code.slice(0, 6), d.code])));
+  const degreeOf = g => cohortDegree.get(g.cohort.slice(0, 6)) ?? null;
+  const course = id => data.courses.find(c => c.id === id);
+  const lectures = c => groupTypes(c, SEM).find(t => t.code === LECTURE).groups;
+
+  // 61761 is scheduled for software (271060...) and information systems (271070...): each sees its own lecture
+  const sw = eligibleCourse(course(61761), SEM, { degree: '6', degreeOf });
+  const is = eligibleCourse(course(61761), SEM, { degree: '7', degreeOf });
+  assert.deepEqual(lectures(sw).map(g => g.cohort.slice(0, 6)), ['271060']);
+  assert.deepEqual(lectures(is).map(g => g.cohort.slice(0, 6)), ['271070']);
+  // tutorials linked from the own lecture stay available (official linkage), others are not invented
+  const swLecture = lectures(sw)[0];
+  for (const g of groupTypes(sw, SEM).find(t => t.code === '9').groups) assert.ok(degreeOf(g) === '6' || swLecture.links.includes(g.iid));
+  assert.ok(courseOptions(sw, SEM).length < courseOptions(course(61761), SEM).length);
+
+  // the global / per-course toggle brings other degrees' groups back
+  assert.equal(lectures(eligibleCourse(course(61761), SEM, { degree: '6', degreeOf, showOther: true })).length, 2);
+
+  // service courses (shared cohort) have no dedicated group: everything stays, flagged
+  const skills = eligibleCourse(course(251961), SEM, { degree: '5', degreeOf });
+  assert.ok(skills.noDedicated.length > 0);
+  assert.equal(groupTypes(skills, SEM)[0].groups.length, groupTypes(course(251961), SEM)[0].groups.length);
+  // ...and the student can mark the groups the official system does not offer them
+  const all = groupTypes(course(251961), SEM)[0].groups;
+  const onlyMine = eligibleCourse(course(251961), SEM, { degree: '5', degreeOf, hidden: all.slice(1).map(g => g.iid) });
+  assert.deepEqual(groupTypes(onlyMine, SEM)[0].groups.map(g => g.iid), [all[0].iid]);
+  assert.equal(courseOptions(onlyMine, SEM).length, 1);
 });
