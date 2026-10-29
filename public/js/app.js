@@ -1,7 +1,7 @@
 import { state, save, plan } from './store.js';
 import {
   DAY_NAMES, DAY_LETTERS, LECTURE, toMin, fmtMin, fmtHours, range, semesterGroups, semesterSessions, courseInSemester,
-  groupTypes, allowedGroups, courseOptions, clashIndexes, scheduleStats, eligibleCourse,
+  groupTypes, allowedGroups, alternativeGroups, courseOptions, clashIndexes, scheduleStats, eligibleCourse,
 } from './model.js';
 import { MODES } from './optimizer.js';
 import { renderBoard } from './board.js';
@@ -13,6 +13,7 @@ let COURSES = new Map();
 let DEGREES = new Map();
 let COHORT_DEGREE = new Map(); // 6-digit cohort prefix -> degree code
 let activeCourse = null;     // course being edited on the board
+let activeType = null;       // the session type being swapped (lecture / tutorial / lab / PBL) – never mixed
 let preview = null;          // { index, picks } auto-builder result previewed on the board
 let auto = null;             // last auto-builder output
 let autoRunning = false;
@@ -148,20 +149,29 @@ function ghostItems() {
   const course = eligible(COURSES.get(activeCourse));
   const picks = plan().picks[course.id] ?? {};
   const ghosts = [];
-  for (const t of requiredTypes(course)) {
-    const allowed = new Set(allowedGroups(course, sem(), t.code, picks).map(g => g.iid));
-    for (const g of t.groups) {
-      if (g.iid === picks[t.code]) continue;
-      for (const s of semesterSessions(g, sem())) {
-        ghosts.push({
-          courseId: course.id, iid: g.iid, day: s.day, start: toMin(s.start), end: toMin(s.end),
-          title: course.name, type: g.type, group: g.sub ? `קב׳ ${g.sub}` : '', room: s.room, lecturer: s.lecturer || g.lecturer,
-          full: g.full, hue: courseLook(course.id).hue, disabled: !allowed.has(g.iid), action: allowed.has(g.iid) ? 'ghost' : '',
-        });
-      }
+  for (const g of alternativeGroups(course, sem(), editType(course), picks)) {
+    for (const s of semesterSessions(g, sem())) {
+      ghosts.push({
+        courseId: course.id, iid: g.iid, day: s.day, start: toMin(s.start), end: toMin(s.end),
+        title: course.name, type: g.type, group: g.sub ? `קב׳ ${g.sub}` : '', room: s.room, lecturer: s.lecturer || g.lecturer,
+        full: g.full, hue: courseLook(course.id).hue, action: 'ghost',
+      });
     }
   }
   return ghosts;
+}
+
+/** The type being edited: the clicked session's type, else the course's first type (lecture). */
+function editType(course) {
+  const types = requiredTypes(course);
+  return types.some(t => t.code === activeType) ? activeType : types[0]?.code ?? null;
+}
+
+/** Starts swapping one session type of a course on the board. */
+function startEdit(courseId, iid = null, typeCode = null) {
+  activeCourse = courseId;
+  activeType = typeCode ?? COURSES.get(courseId)?.groups.find(g => g.iid === iid)?.typeCode ?? null;
+  preview = null;
 }
 
 /** Sets a group for a course and keeps the other picks consistent with the link chain (lecture → tutorial → lab). */
@@ -169,6 +179,7 @@ function setPick(courseId, iid) {
   const g = COURSES.get(courseId).groups.find(x => x.iid === iid);
   const course = eligible(COURSES.get(courseId));
   const picks = (plan().picks[courseId] ??= {});
+  const before = { ...picks };
   picks[g.typeCode] = iid;
   for (let pass = 0; pass < 2; pass++) {
     for (const t of groupTypes(course, sem())) {
@@ -178,6 +189,8 @@ function setPick(courseId, iid) {
     }
   }
   save();
+  // linked groups that had to change because of this pick (e.g. new lecture -> its own tutorials)
+  return groupTypes(course, sem()).filter(t => t.code !== g.typeCode && before[t.code] && before[t.code] !== picks[t.code]).map(t => t.name);
 }
 
 /** Group that clashes least with what is already on the board. */
@@ -579,9 +592,17 @@ function renderSummary(items) {
       <button class="btn sm" data-action="cancel-preview">ביטול</button>`;
   } else if (activeCourse && COURSES.get(activeCourse)) {
     const c = COURSES.get(activeCourse);
+    const ec = eligible(c);
+    const type = editType(ec);
+    const types = requiredTypes(ec);
+    const typeName = types.find(t => t.code === type)?.name ?? '';
+    const alternatives = alternativeGroups(ec, sem(), type, plan().picks[c.id] ?? {}).length;
     bar.hidden = false;
     bar.className = 'editbar';
-    bar.innerHTML = `<span class="grow">עריכת <b>${esc(c.name)}</b>: לחצו על משבצת מקווקוות כדי לעבור לקבוצה אחרת</span>
+    bar.innerHTML = `<span class="grow">החלפת <b>${esc(typeName)}</b> ב<b>${esc(c.name)}</b>: ${alternatives
+        ? `${alternatives === 1 ? 'יש קבוצה חלופית אחת' : `${alternatives} קבוצות חלופיות`} – לחצו על משבצת מקווקוות`
+        : `<span class="badge warn">אין קבוצות ${esc(typeName)} חלופיות</span>`}</span>
+      ${types.length > 1 ? `<span class="chips">${types.map(t => `<button class="chip ${t.code === type ? 'on' : ''}" data-action="edit-type" data-type="${t.code}">${esc(t.name)}</button>`).join('')}</span>` : ''}
       <button class="btn sm" data-action="details" data-course="${c.id}">פרטי הקורס</button>
       <button class="btn sm" data-action="lock" data-course="${c.id}">${plan().locked[c.id] ? '🔒 נעול' : '🔓 נעילה'}</button>
       <button class="btn sm danger" data-action="remove" data-course="${c.id}">הסרה</button>
@@ -933,9 +954,20 @@ const actions = {
   'close-modal': () => closeModal(),
   official: el => openOfficial(state.year, 'S_LOOK_FOR_NOSE', `-N${el.dataset.course}`),
   'official-group': el => openOfficial(state.year, 'S_CourseDetails', el.dataset.iid),
-  edit: el => { activeCourse = Number(el.dataset.course); pane = 'board'; render(); },
-  block: el => { const id = Number(el.dataset.course); activeCourse = activeCourse === id ? null : id; preview = null; render(); },
-  ghost: el => { setPick(Number(el.dataset.course), el.dataset.iid); render(); },
+  edit: el => { startEdit(Number(el.dataset.course), el.dataset.iid || null); pane = 'board'; render(); },
+  'edit-type': el => { activeType = el.dataset.type; render(); },
+  block: el => {
+    const id = Number(el.dataset.course);
+    const type = COURSES.get(id)?.groups.find(g => g.iid === el.dataset.iid)?.typeCode;
+    if (activeCourse === id && activeType === type) activeCourse = null; // clicking the same session again ends editing
+    else startEdit(id, el.dataset.iid);
+    preview = null; render();
+  },
+  ghost: el => {
+    const changed = setPick(Number(el.dataset.course), el.dataset.iid);
+    render();
+    if (changed.length) toast(`עודכן גם ה${changed.join(' וה')} – הקבוצה הקודמת לא מקושרת לבחירה החדשה`);
+  },
   'done-edit': () => { activeCourse = null; render(); },
   lock: el => { const id = Number(el.dataset.course); const p = plan(); p.locked[id] = !p.locked[id]; save(); render(); },
   overlap: el => { const id = Number(el.dataset.course); const p = plan(); p.overlap[id] = !p.overlap[id]; save(); render(); },
@@ -988,7 +1020,7 @@ function closeContextMenu() {
   document.getElementById('ctx-menu')?.remove();
 }
 
-function openContextMenu(courseId, x, y) {
+function openContextMenu(courseId, x, y, iid = '') {
   closeContextMenu();
   const c = COURSES.get(courseId);
   if (!c) return;
@@ -1006,7 +1038,7 @@ function openContextMenu(courseId, x, y) {
     <button class="ctx-item" data-action="set-color" data-course="${courseId}" data-color="">צבע ברירת מחדל</button>
     <hr>
     <button class="ctx-item" role="menuitem" data-action="details" data-course="${courseId}">📄 פתח דף קורס</button>
-    <button class="ctx-item" role="menuitem" data-action="edit" data-course="${courseId}">⇄ בחירת קבוצה אחרת</button>
+    <button class="ctx-item" role="menuitem" data-action="edit" data-course="${courseId}" data-iid="${esc(iid)}">⇄ בחירת קבוצה אחרת</button>
     <button class="ctx-item" role="menuitem" data-action="lock" data-course="${courseId}">${locked ? '🔓 שחרר נעילה' : '🔒 נעל קבוצה'}</button>
     <button class="ctx-item danger" role="menuitem" data-action="remove" data-course="${courseId}">✕ הסר מהמערכת</button>`;
   document.body.append(menu);
@@ -1023,7 +1055,7 @@ document.addEventListener('contextmenu', e => {
   const block = e.target.closest('.block[data-action="block"]');
   if (!block) return;
   e.preventDefault();
-  openContextMenu(Number(block.dataset.course), e.clientX, e.clientY);
+  openContextMenu(Number(block.dataset.course), e.clientX, e.clientY, block.dataset.iid);
 });
 
 let pressTimer = null;
@@ -1033,7 +1065,7 @@ document.addEventListener('touchstart', e => {
   const { clientX, clientY } = e.touches[0];
   pressTimer = setTimeout(() => {
     suppressClick = true;
-    openContextMenu(Number(block.dataset.course), clientX, clientY);
+    openContextMenu(Number(block.dataset.course), clientX, clientY, block.dataset.iid);
   }, 550);
 }, { passive: true });
 for (const type of ['touchend', 'touchmove', 'touchcancel']) {

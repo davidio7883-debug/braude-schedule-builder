@@ -207,3 +207,11 @@ export function eligibleCourse(course, sem, { degree, degreeOf, showOther = fals
   }
   return { ...course, groups: course.groups.filter(g => keep.has(g)), noDedicated };
 }
+
+/**
+ * Groups the student can switch to for ONE session type of a course: the other groups of that type that are
+ * allowed by the current picks' links (e.g. only the tutorials linked to the chosen lecture). Never mixes types.
+ */
+export function alternativeGroups(course, sem, typeCode, picks) {
+  return allowedGroups(course, sem, typeCode, picks).filter(g => g.iid !== picks?.[typeCode]);
+}

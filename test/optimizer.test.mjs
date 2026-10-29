@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { courseOptions, groupTypes, semesterSessions, courseInSemester, clashIndexes, allowedGroups, eligibleCourse, toMin, LECTURE, PBL } from '../public/js/model.js';
+import { courseOptions, groupTypes, semesterSessions, courseInSemester, clashIndexes, allowedGroups, alternativeGroups, eligibleCourse, toMin, LECTURE, PBL } from '../public/js/model.js';
 import { solve } from '../public/js/optimizer.js';
 
 const DATA_FILE = new URL('../public/data/2027.json', import.meta.url);
@@ -238,4 +238,28 @@ test('real data: by default only the student\'s own degree groups are offered', 
   const onlyMine = eligibleCourse(course(251961), SEM, { degree: '5', degreeOf, hidden: all.slice(1).map(g => g.iid) });
   assert.deepEqual(groupTypes(onlyMine, SEM)[0].groups.map(g => g.iid), [all[0].iid]);
   assert.equal(courseOptions(onlyMine, SEM).length, 1);
+});
+
+test('real data: swapping a session offers only alternatives of the same type, within the links', { skip: !data }, () => {
+  const course = id => data.courses.find(c => c.id === id);
+  const typeOf = (c, iid) => c.groups.find(g => g.iid === iid).typeCode;
+
+  // 11003: lecture and tutorials are never mixed
+  const calc = course(11003);
+  const opt = courseOptions(calc, SEM).find(o => !o.selfOverlap);
+  for (const type of ['1', '9']) {
+    const alts = alternativeGroups(calc, SEM, type, opt.picks);
+    assert.ok(alts.length > 0, `11003 has other ${type} groups`);
+    assert.ok(alts.every(g => g.typeCode === type), 'only the clicked type');
+    assert.ok(!alts.some(g => g.iid === opt.picks[type]), 'not the current group');
+  }
+
+  // 61903: tutorials only from the chosen lecture's links, labs only from the chosen tutorial's links
+  const cs = course(61903);
+  const g = (type, sub) => cs.groups.find(x => x.sem === SEM && x.typeCode === type && x.sub === sub);
+  const picks = { 1: g('1', '2').iid, 9: g('9', '3').iid, 8: g('8', '5').iid };
+  const tutorials = alternativeGroups(cs, SEM, '9', picks);
+  assert.deepEqual(tutorials.map(x => x.iid), [g('9', '2').iid], 'the other tutorial linked to lecture 2');
+  const labs = alternativeGroups(cs, SEM, '8', picks);
+  assert.ok(labs.length === 2 && labs.every(x => g('9', '3').links.includes(x.iid) && typeOf(cs, x.iid) === '8'), 'labs linked to tutorial 3');
 });
