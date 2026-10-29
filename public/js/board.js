@@ -34,7 +34,7 @@ function blockHtml(it, from, cls) {
   const width = 100 / it.lanes;
   const short = it.end - it.start < 75;
   const tip = `${it.title} · ${it.type}\n${range(fmtMin(it.start), fmtMin(it.end))}${it.room ? ` · ${it.room}` : ''}${it.lecturer ? `\n${it.lecturer}` : ''}${it.full ? '\nהקבוצה מלאה' : ''}`;
-  return `<div class="block ${cls}" style="--c:${it.color};--tm:${it.tm || "42%"};top:${top};height:${height};inset-inline-start:calc(${width * it.lane}% + 2px);width:calc(${width}% - 4px)"
+  return `<div class="block ${cls}" style="--h:${it.hue};${it.fill ? `--fill:${it.fill};--ink:${it.ink};` : ''}top:${top};height:${height};inset-inline-start:calc(${width * it.lane}% + 2px);width:calc(${width}% - 4px)"
     data-action="${esc(it.action)}" data-course="${it.courseId}" data-iid="${esc(it.iid)}" title="${esc(tip)}">
     <b>${esc(it.title)}</b>
     <div class="t">${esc(it.type)}${it.group ? ` · ${esc(it.group)}` : ''}${it.full ? ' · <span class="full-tag">מלא</span>' : ''}</div>
@@ -44,7 +44,7 @@ function blockHtml(it, from, cls) {
 }
 
 /**
- * items:  placed sessions {courseId, iid, day, start, end, title, type, group, room, lecturer, full, color, clash, active, action}
+ * items:  placed sessions {courseId, iid, day, start, end, title, type, group, room, lecturer, full, hue, fill?, ink?, clash, active, action}
  * ghosts: alternative groups of the course being edited (same shape, plus disabled)
  * days:   number of day columns from Sunday (5 hides Friday, 6 shows it)
  */
@@ -67,7 +67,7 @@ export function renderBoard(el, { items, ghosts = [], daysOff = [], days = 6 }) 
   for (let d = 0; d < days; d++) {
     html += `<div class="day-col ${daysOff.includes(d) ? 'off' : ''}" style="height:${height}">`;
     for (const it of layoutLanes(items.filter(i => i.day === d))) {
-      html += blockHtml(it, from, `${it.clash ? 'clash' : ''} ${it.active ? 'active' : ''} ${it.preview ? 'preview' : ''}`);
+      html += blockHtml(it, from, `${it.fill ? 'custom' : ''} ${it.clash ? 'clash' : ''} ${it.active ? 'active' : ''} ${it.preview ? 'preview' : ''}`);
     }
     for (const it of layoutLanes(ghosts.filter(i => i.day === d))) {
       html += blockHtml(it, from, `ghost ${it.disabled ? 'disabled' : ''}`);

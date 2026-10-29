@@ -58,15 +58,26 @@ function picksOf(courseId) {
   return (preview ? preview.picks[courseId] : plan().picks[courseId]) ?? {};
 }
 
-/** Course color: the student's choice, else a stable hue per course. */
-const courseColor = id => state.courseColors[id] || `hsl(${Math.round(hueOf(id))} 62% 46%)`;
-
-/** CSS vars for a course color; very light custom colors get darker text so it stays readable. */
-function colorVars(id) {
-  const custom = state.courseColors[id];
-  const textMix = custom && luminance(custom) > 0.45 ? 22 : 42;
-  return `--c:${courseColor(id)};--tm:${textMix}%`;
+/** Hue of a #rrggbb color (used for the dashed previews of a course with a custom color). */
+function hexHue(hex) {
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  if (!d) return 0;
+  const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return Math.round((h * 60 + 360) % 360);
 }
+
+/** How a course is painted: default pastel by hue, or a solid fill of the student's color with readable ink. */
+function courseLook(id) {
+  const custom = state.courseColors[id];
+  if (!custom) return { hue: Math.round(hueOf(id)), dot: `hsl(${Math.round(hueOf(id))} 70% 55%)` };
+  // pick whichever of black/white has the higher contrast ratio against the fill
+  const L = luminance(custom);
+  const ink = (L + 0.05) / 0.05 >= 1.05 / (L + 0.05) ? '#111827' : '#ffffff';
+  return { hue: hexHue(custom), fill: custom, ink, dot: custom };
+}
+
+const colorVars = id => `--c:${courseLook(id).dot}`;
 
 function colorButton(id) {
   return `<button class="color-dot" style="${colorVars(id)}" data-action="color-menu" data-course="${id}" title="צבע הקורס" aria-label="בחירת צבע לקורס"></button>`;
@@ -115,7 +126,7 @@ function placedItems() {
         items.push({
           courseId: id, iid: g.iid, day: s.day, start: toMin(s.start), end: toMin(s.end),
           title: course.name, type: g.type, group: g.sub ? `קב׳ ${g.sub}` : '', room: s.room, lecturer: s.lecturer || g.lecturer,
-          full: g.full, color: courseColor(id), tm: colorVars(id).split('--tm:')[1], active: activeCourse === id, preview: !!preview, action: 'block',
+          full: g.full, ...courseLook(id), active: activeCourse === id, preview: !!preview, action: 'block',
           overlapOk: !!plan().overlap[id], typeCode: g.typeCode,
         });
       }
@@ -145,7 +156,7 @@ function ghostItems() {
         ghosts.push({
           courseId: course.id, iid: g.iid, day: s.day, start: toMin(s.start), end: toMin(s.end),
           title: course.name, type: g.type, group: g.sub ? `קב׳ ${g.sub}` : '', room: s.room, lecturer: s.lecturer || g.lecturer,
-          full: g.full, color: courseColor(course.id), tm: colorVars(course.id).split('--tm:')[1], disabled: !allowed.has(g.iid), action: allowed.has(g.iid) ? 'ghost' : '',
+          full: g.full, hue: courseLook(course.id).hue, disabled: !allowed.has(g.iid), action: allowed.has(g.iid) ? 'ghost' : '',
         });
       }
     }
@@ -904,7 +915,7 @@ const actions = {
     if (el.dataset.color) state.courseColors[id] = el.dataset.color; else delete state.courseColors[id];
     colorMenuFor = null; save(); render();
   },
-  'custom-color': el => { state.courseColors[Number(el.dataset.course)] = el.value; save(); render(); },
+  'custom-color': el => { state.courseColors[Number(el.dataset.course)] = el.value; save(); render(); closeContextMenu(); },
   'show-friday': el => { state.showFriday = el.checked; save(); render(); },
   'other-degrees': el => { state.showOtherDegrees = el.checked; save(); render(); },
   'course-other-degrees': el => { state.otherDegreeCourses[el.dataset.course] = el.checked; save(); render(); },
@@ -968,7 +979,74 @@ const actions = {
   },
 };
 
+// ---------------------------------------------------------------- context menu on board blocks
+// Right-click (or long-press on touch) a course on the board: colors + quick actions.
+
+let suppressClick = false;
+
+function closeContextMenu() {
+  document.getElementById('ctx-menu')?.remove();
+}
+
+function openContextMenu(courseId, x, y) {
+  closeContextMenu();
+  const c = COURSES.get(courseId);
+  if (!c) return;
+  const current = state.courseColors[courseId];
+  const locked = plan().locked[courseId];
+  const menu = document.createElement('div');
+  menu.id = 'ctx-menu';
+  menu.className = 'ctx-menu';
+  menu.setAttribute('role', 'menu');
+  menu.innerHTML = `<div class="ctx-title" style="${colorVars(courseId)}"><span class="color-dot"></span>${esc(c.name)}</div>
+    <div class="ctx-colors">
+      ${PALETTE.map(col => `<button class="swatch ${current === col ? 'on' : ''}" style="--c:${col}" data-action="set-color" data-course="${courseId}" data-color="${col}" aria-label="${col}"></button>`).join('')}
+      <label class="swatch custom" title="צבע אחר"><input type="color" data-action="custom-color" data-course="${courseId}" value="${current || '#2563eb'}" aria-label="צבע אחר"/></label>
+    </div>
+    <button class="ctx-item" data-action="set-color" data-course="${courseId}" data-color="">צבע ברירת מחדל</button>
+    <hr>
+    <button class="ctx-item" role="menuitem" data-action="details" data-course="${courseId}">📄 פתח דף קורס</button>
+    <button class="ctx-item" role="menuitem" data-action="edit" data-course="${courseId}">⇄ בחירת קבוצה אחרת</button>
+    <button class="ctx-item" role="menuitem" data-action="lock" data-course="${courseId}">${locked ? '🔓 שחרר נעילה' : '🔒 נעל קבוצה'}</button>
+    <button class="ctx-item danger" role="menuitem" data-action="remove" data-course="${courseId}">✕ הסר מהמערכת</button>`;
+  document.body.append(menu);
+  // keep it inside the viewport (RTL: open toward the left of the pointer)
+  const r = menu.getBoundingClientRect();
+  const left = Math.min(Math.max(8, x - r.width), innerWidth - r.width - 8);
+  const top = Math.min(Math.max(8, y), innerHeight - r.height - 8);
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+  menu.querySelector('button')?.focus({ preventScroll: true });
+}
+
+document.addEventListener('contextmenu', e => {
+  const block = e.target.closest('.block[data-action="block"]');
+  if (!block) return;
+  e.preventDefault();
+  openContextMenu(Number(block.dataset.course), e.clientX, e.clientY);
+});
+
+let pressTimer = null;
+document.addEventListener('touchstart', e => {
+  const block = e.target.closest('.block[data-action="block"]');
+  if (!block || e.touches.length !== 1) return;
+  const { clientX, clientY } = e.touches[0];
+  pressTimer = setTimeout(() => {
+    suppressClick = true;
+    openContextMenu(Number(block.dataset.course), clientX, clientY);
+  }, 550);
+}, { passive: true });
+for (const type of ['touchend', 'touchmove', 'touchcancel']) {
+  document.addEventListener(type, () => clearTimeout(pressTimer), { passive: true });
+}
+addEventListener('resize', closeContextMenu);
+document.getElementById('board-area')?.addEventListener('scroll', closeContextMenu, true);
+
 document.addEventListener('click', e => {
+  if (suppressClick) { suppressClick = false; e.preventDefault(); return; }
+  const menu = document.getElementById('ctx-menu');
+  if (menu && !menu.contains(e.target)) { closeContextMenu(); return; }
+  if (menu && e.target.closest('[data-action]') && e.target.tagName !== 'INPUT' && !e.target.closest('label')) setTimeout(closeContextMenu);
   const el = e.target.closest('[data-action]');
   if (e.target.id === 'modal' && !degreeFirstRun) return closeModal();
   if (!el || el.tagName === 'SELECT' || el.tagName === 'INPUT') return;
@@ -1006,6 +1084,7 @@ document.addEventListener('input', e => {
 });
 
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('ctx-menu')) { closeContextMenu(); return; }
   if (e.key === 'Escape') {
     if (!$('#modal').hidden) { if (!degreeFirstRun) closeModal(); }
     else if (preview) { preview = null; render(); }
