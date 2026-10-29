@@ -144,7 +144,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .empty .big { font-size: 34px; margin-bottom: 6px; }
 
 /* ---------- my courses ---------- */
-.mine-card { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; border-inline-start: 5px solid hsl(var(--h) 70% 55%); }
+.mine-card { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; border-inline-start: 5px solid var(--c); }
 .mine-card.active { box-shadow: 0 0 0 2px var(--accent); }
 .mine-head { display: flex; gap: 8px; align-items: center; }
 .mine-head .course-name { flex: 1; }
@@ -178,11 +178,11 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .stats { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0; }
 .stat { background: var(--surface-3); border-radius: 7px; padding: 2px 8px; font-size: 12.5px; }
 .stat b { font-weight: 600; }
-.mini-week { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; height: 64px; }
+.mini-week { display: grid; grid-template-columns: repeat(var(--days, 6), 1fr); gap: 4px; height: 64px; }
 .mini-day { position: relative; background: var(--surface-3); border-radius: 5px; overflow: hidden; }
 .mini-day.off { background: repeating-linear-gradient(45deg, var(--surface-3), var(--surface-3) 4px, transparent 4px, transparent 8px); }
 .mini-day i { position: absolute; inset-inline: 2px; background: linear-gradient(var(--accent), var(--accent-2)); border-radius: 2px; }
-.mini-labels { display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.mini-labels { display: grid; grid-template-columns: repeat(var(--days, 6), 1fr); text-align: center; font-size: 11px; color: var(--muted); margin-top: 2px; }
 .notice { border-radius: 10px; padding: 10px 12px; font-size: 13.5px; margin: 8px 0; background: var(--surface-3); }
 .notice.warn { background: color-mix(in srgb, var(--warn) 14%, var(--surface)); }
 .notice.err { background: var(--danger-soft); }
@@ -202,7 +202,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 
 /* ---------- board ---------- */
 .board-scroll { flex: 1; min-height: 0; overflow: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
-.board { display: grid; grid-template-columns: 58px repeat(6, minmax(120px, 1fr)); min-width: 780px; position: relative; }
+.board { --days: 6; display: grid; grid-template-columns: 58px repeat(var(--days), minmax(120px, 1fr)); min-width: calc(58px + var(--days) * 120px); position: relative; }
 .board-head { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 6px; text-align: center; font-weight: 600; font-size: 14px; }
 .board-head.off { color: var(--muted); text-decoration: line-through; }
 .board-head small { display: block; color: var(--muted); font-weight: 400; font-size: 11.5px; }
@@ -213,8 +213,9 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .day-col.off { background-color: color-mix(in srgb, var(--surface-3) 70%, transparent); }
 .block {
   position: absolute; border-radius: 9px; padding: 5px 7px; overflow: hidden; font-size: 12px; line-height: 1.3;
-  background: hsl(var(--h) 75% var(--block-l)); color: hsl(var(--h) 60% var(--block-text-l));
-  border: 1px solid hsl(var(--h) 60% 60% / .55); border-inline-start: 4px solid hsl(var(--h) 70% 50%);
+  /* one course color (--c) drives everything; text mixes it with the theme text color for contrast */
+  background: color-mix(in srgb, var(--c) 18%, var(--surface)); color: color-mix(in srgb, var(--c) var(--tm, 42%), var(--text));
+  border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); border-inline-start: 4px solid var(--c);
   cursor: pointer; transition: transform .12s, box-shadow .12s;
 }
 .block:hover { box-shadow: var(--shadow-lg); z-index: 3; transform: translateY(-1px); }
@@ -223,8 +224,8 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .block.clash { outline: 2px solid var(--danger); outline-offset: -1px; }
 .block.clash::after { content: 'התנגשות'; position: absolute; bottom: 3px; inset-inline-end: 4px; background: var(--danger); color: #fff; font-size: 10px; padding: 0 5px; border-radius: 5px; }
 .block.active { box-shadow: 0 0 0 2px var(--accent); }
-.block.ghost { background: transparent; border: 1.5px dashed hsl(var(--h) 60% 50%); color: var(--text); opacity: .9; z-index: 2; backdrop-filter: blur(2px); background: color-mix(in srgb, var(--surface) 70%, transparent); }
-.block.ghost:hover { background: hsl(var(--h) 75% var(--block-l)); }
+.block.ghost { background: transparent; border: 1.5px dashed var(--c); color: var(--text); opacity: .9; z-index: 2; backdrop-filter: blur(2px); background: color-mix(in srgb, var(--surface) 70%, transparent); }
+.block.ghost:hover { background: color-mix(in srgb, var(--c) 18%, var(--surface)); }
 .block.ghost.disabled { opacity: .35; cursor: not-allowed; }
 .block.preview { border-style: solid; }
 .block .full-tag { color: var(--danger); font-weight: 600; }
@@ -287,7 +288,7 @@ hr.sep { border: 0; border-top: 1px solid var(--border); margin: 14px 0; }
   .layout[data-pane="board"] .panel { display: none; }
   .panel { max-height: none; }
   .board-scroll { max-height: calc(100vh - 210px); }
-  .board { grid-template-columns: 44px repeat(6, minmax(96px, 1fr)); min-width: 620px; }
+  .board { grid-template-columns: 44px repeat(var(--days), minmax(96px, 1fr)); min-width: calc(44px + var(--days) * 96px); }
   .mobile-nav {
     display: flex; position: fixed; bottom: 0; inset-inline: 0; z-index: 30; background: var(--surface); border-top: 1px solid var(--border);
     padding: 6px; gap: 6px;
@@ -299,13 +300,36 @@ hr.sep { border: 0; border-top: 1px solid var(--border); margin: 14px 0; }
   .modal-body { padding: 14px; }
 }
 
+@page { size: A4 landscape; margin: 8mm; }
 @media print {
-  .topbar, .panel, .mobile-nav, .editbar, .toast, .summary button { display: none !important; }
-  .layout { display: block; height: auto; padding: 0; }
-  .board-scroll { overflow: visible; border: 0; box-shadow: none; }
-  .board { min-width: 0; }
-  .block { break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* 08:00-22:00 on one landscape A4 page */
+  :root { --ppm: 0.58px; }
+  .block { padding: 3px 5px; font-size: 10.5px; }
+  .block b { font-size: 11px; }
+  .topbar, .panel, .mobile-nav, .editbar, .toast, .summary button, .summary .toggle, .rooms-area { display: none !important; }
+  /* the board must print even when the phone layout was showing the course list */
+  .layout, .layout[data-pane] { display: block !important; height: auto; padding: 0; }
+  .layout .board-area, .layout[data-pane="panel"] .board-area { display: flex !important; }
+  .board-scroll { overflow: visible; border: 1px solid #8a90a6; box-shadow: none; max-height: none !important; }
+  /* fit the page width so the browser does not shrink-scale (which drops 1px lines on some columns) */
+  .board { min-width: 0 !important; width: 100%; grid-template-columns: 44px repeat(var(--days), minmax(0, 1fr)) !important; }
+  .board-head { position: static; border-bottom: 1.5px solid #8a90a6; }
+  /* explicit, darker separators for every day column (backgrounds may be dropped by the printer) */
+  .time-col, .day-col { border-inline-end: 1.5px solid #8a90a6 !important; }
+  .board-head:not(:last-child) { border-inline-end: 1.5px solid #8a90a6; }
+  .day-col:last-child { border-inline-end: 0 !important; }
+  .day-col, .block { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .block { break-inside: avoid; box-shadow: none !important; transform: none !important; }
 }
+
+/* course colors */
+.color-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1.5px var(--c); background: var(--c); padding: 0; flex: none; }
+.modal-head .color-dot { margin-top: 6px; }
+.color-menu { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0 4px; padding: 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
+.swatch { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--border); background: var(--c); padding: 0; position: relative; overflow: hidden; }
+.swatch.on { box-shadow: 0 0 0 2px var(--text); }
+.swatch.custom { background: conic-gradient(#ef4444, #eab308, #22c55e, #06b6d4, #6366f1, #d946ef, #ef4444); cursor: pointer; }
+.swatch.custom input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
 
 /* syllabus rendered by pdf.js */
 .pdf-view { display: grid; gap: 12px; min-height: 200px; place-items: start center; }

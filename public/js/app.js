@@ -5,7 +5,7 @@ import {
 } from './model.js';
 import { MODES } from './optimizer.js';
 import { renderBoard } from './board.js';
-import { esc, $, hueOf, toast, debounce, openOfficial } from './util.js';
+import { esc, $, hueOf, toast, debounce, openOfficial, PALETTE, luminance } from './util.js';
 
 let INDEX = null;     // data/index.json
 let DATA = null;      // data/<year>.json
@@ -19,6 +19,8 @@ let autoRunning = false;
 let modalCourse = null, modalTab = 'info';
 let pane = 'panel';
 let degreeFirstRun = false;
+let sharedOpened = false;
+let colorMenuFor = null; // course whose color palette is open
 let rooms = { day: new Date().getDay() < 6 ? new Date().getDay() : 0, from: 600, to: 720, q: '' };
 
 const STUDY_YEARS = ['', 'א', 'ב', 'ג', 'ד'];
@@ -56,6 +58,33 @@ function picksOf(courseId) {
   return (preview ? preview.picks[courseId] : plan().picks[courseId]) ?? {};
 }
 
+/** Course color: the student's choice, else a stable hue per course. */
+const courseColor = id => state.courseColors[id] || `hsl(${Math.round(hueOf(id))} 62% 46%)`;
+
+/** CSS vars for a course color; very light custom colors get darker text so it stays readable. */
+function colorVars(id) {
+  const custom = state.courseColors[id];
+  const textMix = custom && luminance(custom) > 0.45 ? 22 : 42;
+  return `--c:${courseColor(id)};--tm:${textMix}%`;
+}
+
+function colorButton(id) {
+  return `<button class="color-dot" style="${colorVars(id)}" data-action="color-menu" data-course="${id}" title="צבע הקורס" aria-label="בחירת צבע לקורס"></button>`;
+}
+
+function colorMenu(id) {
+  if (colorMenuFor !== id) return '';
+  const current = state.courseColors[id];
+  return `<div class="color-menu" role="group" aria-label="צבע הקורס">
+    ${PALETTE.map(c => `<button class="swatch ${current === c ? 'on' : ''}" style="--c:${c}" data-action="set-color" data-course="${id}" data-color="${c}" aria-label="${c}"></button>`).join('')}
+    <label class="swatch custom" title="צבע אחר"><input type="color" data-action="custom-color" data-course="${id}" value="${current || '#2563eb'}" aria-label="צבע אחר"/></label>
+    <button class="linkish" data-action="set-color" data-course="${id}" data-color="">ברירת מחדל</button>
+  </div>`;
+}
+
+/** Friday is shown when the student asked for it, or automatically when a session falls on it. */
+const showFridayFor = hasFridaySession => (state.showFriday || hasFridaySession ? 6 : 5);
+
 function requiredTypes(course) {
   const excluded = plan().excluded[course.id] ?? [];
   return groupTypes(course, sem()).filter(t => !excluded.includes(t.code));
@@ -86,7 +115,7 @@ function placedItems() {
         items.push({
           courseId: id, iid: g.iid, day: s.day, start: toMin(s.start), end: toMin(s.end),
           title: course.name, type: g.type, group: g.sub ? `קב׳ ${g.sub}` : '', room: s.room, lecturer: s.lecturer || g.lecturer,
-          full: g.full, hue: hueOf(id), active: activeCourse === id, preview: !!preview, action: 'block',
+          full: g.full, color: courseColor(id), tm: colorVars(id).split('--tm:')[1], active: activeCourse === id, preview: !!preview, action: 'block',
           overlapOk: !!plan().overlap[id], typeCode: g.typeCode,
         });
       }
@@ -116,7 +145,7 @@ function ghostItems() {
         ghosts.push({
           courseId: course.id, iid: g.iid, day: s.day, start: toMin(s.start), end: toMin(s.end),
           title: course.name, type: g.type, group: g.sub ? `קב׳ ${g.sub}` : '', room: s.room, lecturer: s.lecturer || g.lecturer,
-          full: g.full, hue: hueOf(course.id), disabled: !allowed.has(g.iid), action: allowed.has(g.iid) ? 'ghost' : '',
+          full: g.full, color: courseColor(course.id), tm: colorVars(course.id).split('--tm:')[1], disabled: !allowed.has(g.iid), action: allowed.has(g.iid) ? 'ghost' : '',
         });
       }
     }
@@ -335,13 +364,14 @@ function renderMineTab() {
     const excluded = p.excluded[id] ?? [];
     const ec = eligible(c);
     const types = groupTypes(ec, sem());
-    html += `<div class="mine-card ${activeCourse === id ? 'active' : ''}" style="--h:${hueOf(id)}">
+    html += `<div class="mine-card ${activeCourse === id ? 'active' : ''}" style="${colorVars(id)}">
       <div class="mine-head">
+        ${colorButton(id)}
         <div class="course-name" data-action="details" data-course="${id}">${esc(c.name)}</div>
         <button class="icon-btn" data-action="lock" data-course="${id}" title="${p.locked[id] ? 'שחרור נעילה' : 'נעילת הקבוצות שנבחרו (הבנייה האוטומטית לא תשנה אותן)'}">${p.locked[id] ? '🔒' : '🔓'}</button>
         <button class="icon-btn" data-action="edit" data-course="${id}" title="בחירת קבוצות על גבי הלוח">✎</button>
         <button class="icon-btn" data-action="remove" data-course="${id}" title="הסרה">✕</button>
-      </div>
+      </div>${colorMenu(id)}
       <div class="course-meta">${id}${c.credits ? ` · ${c.credits} נ״ז` : ''}
         <button class="linkish" data-action="overlap" data-course="${id}" title="למשל מעבדה שמתקיימת אחת לשבועיים – הקורס לא ייחשב כמתנגש">${p.overlap[id] ? '✓ מותר לחפוף לקורסים אחרים' : 'לאפשר חפיפה (מעבדה דו-שבועית)'}</button></div>`;
     if (!types.length) html += `<div class="notice warn">הקורס לא נלמד בסמסטר זה</div>`;
@@ -439,8 +469,8 @@ function renderAutoResults() {
         <span class="stat">${range(fmtMin(s.earliest), fmtMin(s.latest))}</span>
         ${r.fullCount ? `<span class="stat badge full">${r.fullCount === 1 ? 'קבוצה מלאה אחת' : `${r.fullCount} קבוצות מלאות`}</span>` : ''}
       </div>
-      <div class="mini-week">${r.daily.map((d, di) => `<div class="mini-day ${off.includes(di) ? 'off' : ''}">${d ? `<i style="top:${Math.min(96, (d.start - 480) / 8.4)}%;height:${Math.max(4, Math.min(d.span, 1320 - d.start) / 8.4)}%"></i>` : ''}</div>`).join('')}</div>
-      <div class="mini-labels">${DAY_LETTERS.map(d => `<span>${d}</span>`).join('')}</div>
+      <div class="mini-week" style="--days:${showFridayFor(r.daily[5])}">${r.daily.slice(0, showFridayFor(r.daily[5])).map((d, di) => `<div class="mini-day ${off.includes(di) ? 'off' : ''}">${d ? `<i style="top:${Math.min(96, (d.start - 480) / 8.4)}%;height:${Math.max(4, Math.min(d.span, 1320 - d.start) / 8.4)}%"></i>` : ''}</div>`).join('')}</div>
+      <div class="mini-labels" style="--days:${showFridayFor(r.daily[5])}">${DAY_LETTERS.slice(0, showFridayFor(r.daily[5])).map(d => `<span>${d}</span>`).join('')}</div>
     </div>`;
   }).join('');
   return html;
@@ -526,6 +556,7 @@ function renderSummary(items) {
     ${notMine.length ? `<div class="sum-item warn" title="${esc(notMine.join(', '))}"><b>${notMine.length}</b>קבוצות שאינן של התואר שלך</div>` : ''}
     ${unlinked.length ? `<div class="sum-item warn" title="${esc(unlinked.join(', '))}"><b>${unlinked.length}</b>לא מקושרים להרצאה שנבחרה</div>` : ''}
     <span class="spacer"></span>
+    <label class="toggle" title="יום שישי מוצג תמיד כשיש בו מפגש"><input type="checkbox" data-action="show-friday" ${state.showFriday ? 'checked' : ''}/> הצג יום שישי${!state.showFriday && items.some(i => i.day === 5) ? ' <span class="badge warn">יש מפגש ביום שישי</span>' : ''}</label>
     <span class="muted" style="font-size:13px">${esc(term)}</span>`;
 
   const bar = $('#editbar');
@@ -657,11 +688,13 @@ function renderCourseModal() {
   }
 
   openModal(`<div class="modal-head">
+      ${colorButton(c.id)}
       <div style="flex:1"><h2 id="modal-title">${esc(c.name)}</h2>
         <div class="sub"><span>${c.id}</span>${c.credits ? `<span>· ${c.credits} נ״ז</span>` : ''}<span>${esc(hours)}</span></div>
         <div class="sub">${degrees}</div></div>
       <button class="icon-btn" data-action="close-modal" aria-label="סגירה">✕</button>
     </div>
+    ${colorMenu(c.id) ? `<div style="padding:0 22px">${colorMenu(c.id)}</div>` : ''}
     <div class="modal-body" style="padding-bottom:0">
       <div class="modal-actions">
         <button class="btn ${selected ? '' : 'primary'}" data-action="${selected ? 'remove' : 'add'}" data-course="${c.id}">${selected ? '✓ במערכת – הסרה' : '+ הוספה למערכת'}</button>
@@ -812,7 +845,8 @@ function render() {
 
   const items = placedItems();
   renderSummary(items);
-  renderBoard($('#board'), { items, ghosts: ghostItems(), daysOff: state.tab === 'auto' || preview ? state.prefs.daysOff : [] });
+  renderBoard($('#board'), { items, ghosts: ghostItems(), daysOff: state.tab === 'auto' || preview ? state.prefs.daysOff : [],
+    days: showFridayFor(items.some(i => i.day === 5)) });
   if (modalCourse) renderCourseModal();
 }
 
@@ -820,7 +854,8 @@ function render() {
 
 function shareLink() {
   const p = plan();
-  const payload = { y: state.year, s: state.sem, c: p.courses.map(id => [id, Object.values(p.picks[id] ?? {}).filter(Boolean)]) };
+  const colors = Object.fromEntries(p.courses.filter(id => state.courseColors[id]).map(id => [id, state.courseColors[id]]));
+  const payload = { y: state.year, s: state.sem, c: p.courses.map(id => [id, Object.values(p.picks[id] ?? {}).filter(Boolean)]), k: colors };
   const enc = btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   return `${location.origin}${location.pathname}#share=${enc}`;
 }
@@ -841,8 +876,10 @@ async function importShare() {
       if (!c) continue;
       p.courses.push(id);
       p.picks[id] = Object.fromEntries(iids.map(iid => [c.groups.find(g => g.iid === iid)?.typeCode, iid]).filter(([k]) => k));
+      if (json.k?.[id]) state.courseColors[id] = json.k[id];
     }
     save();
+    sharedOpened = true;
     toast('נטענה מערכת ששותפה איתכם', { label: 'ביטול', run: () => { Object.assign(plan(), JSON.parse(before)); save(); render(); } });
   } catch {
     toast('קישור השיתוף אינו תקין');
@@ -861,6 +898,14 @@ const actions = {
   'no-degree': () => { state.degree = null; state.showAll = true; save(); closeModal(); render(); },
   'study-year': el => { state.studyYear = Number(el.dataset.year); save(); render(); },
   'show-all': el => { state.showAll = el.checked; save(); render(); },
+  'color-menu': el => { const id = Number(el.dataset.course); colorMenuFor = colorMenuFor === id ? null : id; render(); },
+  'set-color': el => {
+    const id = Number(el.dataset.course);
+    if (el.dataset.color) state.courseColors[id] = el.dataset.color; else delete state.courseColors[id];
+    colorMenuFor = null; save(); render();
+  },
+  'custom-color': el => { state.courseColors[Number(el.dataset.course)] = el.value; save(); render(); },
+  'show-friday': el => { state.showFriday = el.checked; save(); render(); },
   'other-degrees': el => { state.showOtherDegrees = el.checked; save(); render(); },
   'course-other-degrees': el => { state.otherDegreeCourses[el.dataset.course] = el.checked; save(); render(); },
   'hide-group': el => {
@@ -949,7 +994,7 @@ document.addEventListener('change', e => {
     rooms[a === 'room-from' ? 'from' : 'to'] = Number(el.value);
     if (rooms.to <= rooms.from) rooms.to = rooms.from + 30;
     render();
-  } else if (a && actions[a] && el.type === 'checkbox') {
+  } else if (a && actions[a] && (el.type === 'checkbox' || el.type === 'color')) {
     actions[a](el);
   }
 });
@@ -991,7 +1036,8 @@ async function switchTerm(value) {
     save();
     $('#loading').remove();
     render();
-    if (!state.degree && !state.showAll) renderDegreeModal(true);
+    // someone opening a shared schedule wants to see it first; the degree can be picked later
+    if (!state.degree && !state.showAll && !sharedOpened) renderDegreeModal(true);
   } catch (err) {
     $('#loading').innerHTML = `<div class="empty"><div class="big">⚠️</div><b>שגיאה בטעינת הנתונים</b><div>${esc(err.message)}</div></div>`;
   }

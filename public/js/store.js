@@ -14,6 +14,8 @@ const defaults = () => ({
   plans: {},
   // Only groups scheduled for the student's own degree are offered unless these say otherwise.
   showOtherDegrees: false,
+  showFriday: false,
+  courseColors: {}, // courseId -> '#rrggbb' chosen by the student
   otherDegreeCourses: {},
   prefs: { mode: 'balanced', daysOff: [], earliest: null, latest: null, avoidFull: true, respectLocks: true },
 });
