@@ -25,7 +25,7 @@
 - כפתור **"פתח את דף הקורס באתר המוסד"**, שפותח את הדף הרשמי של השנה הנכונה.
 
 ### 🗓️ לוח שבועי אינטראקטיבי
-- ימים א׳–ו׳, בשעות 08:00–23:00.
+- ימים א׳–ו׳, בשעות 08:00–22:00 (הלוח מתארך אוטומטית אם משבצים קורס שמסתיים מאוחר יותר).
 - כשמוסיפים קורס, האתר בוחר אוטומטית את הקבוצות שמתאימות הכי טוב ללוח הקיים.
 - לוחצים על קורס, וכל הקבוצות האחרות שלו מופיעות כמשבצות מקווקוות. לוחצים על אחת מהן כדי לעבור אליה.
 - התנגשויות מסומנות באדום.
@@ -124,7 +124,7 @@ research/       מחקר מקדים ודוגמאות
 
 - **Degree-aware course list:** pick your degree and study year to see only the courses that apply to you. Courses shared by several degrees appear under each one.
 - **Course pages** show the catalog description, every group (lecturer, times, room, full or open), the **syllabus rendered in-app**, and a link to the official course page for the correct academic year.
-- **Interactive weekly board** (Sunday–Friday, 08:00–23:00) with one-click group switching and clash highlighting.
+- **Interactive weekly board** (Sunday–Friday, 08:00–22:00, extending automatically for later sessions) with one-click group switching and clash highlighting.
 - **Auto-builder:** a branch-and-bound search that runs in a Web Worker. It takes one lecture per course plus a tutorial or lab linked to that lecture, and finds the best clash-free combinations for your goal: fewest days, short days, no gaps, or balanced. It also respects hard days off, earliest and latest hours, a preference for open groups, and locked groups.
 - **Data:** scraped from Braude's public yedion (`info.braude.ac.il`) by a polite, cached Node scraper, with [braude.top](https://braude.top/braude) as a fallback.
 

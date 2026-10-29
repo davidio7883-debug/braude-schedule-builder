@@ -22,7 +22,7 @@ let degreeFirstRun = false;
 let rooms = { day: new Date().getDay() < 6 ? new Date().getDay() : 0, from: 600, to: 720, q: '' };
 
 const STUDY_YEARS = ['', 'א', 'ב', 'ג', 'ד'];
-const TIME_OPTIONS = ['08:30', '09:30', '10:30', '11:30', '12:20', '12:50', '13:50', '14:50', '15:50', '16:50', '17:50', '18:50', '19:50', '20:50', '21:50', '22:50'];
+const TIME_OPTIONS = ['08:30', '09:30', '10:30', '11:30', '12:20', '12:50', '13:50', '14:50', '15:50', '16:50', '17:50', '18:50', '19:50', '20:50', '21:50'];
 
 // ---------------------------------------------------------------- data
 
@@ -439,7 +439,7 @@ function renderAutoResults() {
         <span class="stat">${range(fmtMin(s.earliest), fmtMin(s.latest))}</span>
         ${r.fullCount ? `<span class="stat badge full">${r.fullCount === 1 ? 'קבוצה מלאה אחת' : `${r.fullCount} קבוצות מלאות`}</span>` : ''}
       </div>
-      <div class="mini-week">${r.daily.map((d, di) => `<div class="mini-day ${off.includes(di) ? 'off' : ''}">${d ? `<i style="top:${(d.start - 480) / 9}%;height:${Math.max(4, d.span / 9)}%"></i>` : ''}</div>`).join('')}</div>
+      <div class="mini-week">${r.daily.map((d, di) => `<div class="mini-day ${off.includes(di) ? 'off' : ''}">${d ? `<i style="top:${Math.min(96, (d.start - 480) / 8.4)}%;height:${Math.max(4, Math.min(d.span, 1320 - d.start) / 8.4)}%"></i>` : ''}</div>`).join('')}</div>
       <div class="mini-labels">${DAY_LETTERS.map(d => `<span>${d}</span>`).join('')}</div>
     </div>`;
   }).join('');
@@ -568,7 +568,7 @@ function renderRooms() {
     free.push({ room, until: next ? next.start : null });
   }
   free.sort((a, b) => (b.until ?? 9999) - (a.until ?? 9999) || a.room.localeCompare(b.room, 'he'));
-  const opts = (sel) => Array.from({ length: 31 }, (_, i) => 480 + i * 30).map(m => `<option value="${m}" ${m === sel ? 'selected' : ''}>${fmtMin(m)}</option>`).join('');
+  const opts = (sel) => Array.from({ length: 29 }, (_, i) => 480 + i * 30).map(m => `<option value="${m}" ${m === sel ? 'selected' : ''}>${fmtMin(m)}</option>`).join('');
   $('#rooms-area').innerHTML = `<div class="rooms-wrap">
     <h2 style="margin:4px 0 12px">חדרים פנויים · סמסטר ${semName(sem())}</h2>
     <div class="rooms-controls">

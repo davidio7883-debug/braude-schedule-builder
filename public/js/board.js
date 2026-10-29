@@ -2,7 +2,7 @@ import { DAY_NAMES, fmtMin, range } from './model.js';
 import { esc } from './util.js';
 
 const DEFAULT_FROM = 8 * 60;
-const DEFAULT_TO = 23 * 60;
+const DEFAULT_TO = 22 * 60; // grows automatically if a placed session ends later (a few 2027 courses run to 22:50/23:50)
 
 /** Assigns side-by-side lanes to overlapping items of one day. */
 function layoutLanes(items) {
